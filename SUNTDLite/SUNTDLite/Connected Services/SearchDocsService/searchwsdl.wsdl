@@ -1,0 +1,829 @@
+<?xml version="1.0" encoding="utf-8"?>
+<wsdl:definitions xmlns:tns="http://kodekssoap.org/" xmlns:http="http://schemas.xmlsoap.org/wsdl/http/" xmlns:kodekstype="http://kodekssoap.org/xsd" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:s="http://www.w3.org/2001/XMLSchema" xmlns:soap-enc="http://schemas.xmlsoap.org/soap/encoding/" targetNamespace="http://kodekssoap.org/" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">
+  <wsdl:types>
+    <s:schema elementFormDefault="qualified" targetNamespace="http://kodekssoap.org/">
+      <s:complexType name="SearchAttribute">
+        <s:sequence>
+          <s:element minOccurs="1" maxOccurs="1" name="id" type="s:int" />
+          <s:element minOccurs="1" maxOccurs="1" name="type" type="s:int" />
+          <s:element minOccurs="1" maxOccurs="1" name="name" type="s:string" />
+          <s:element minOccurs="1" maxOccurs="1" name="hintId" type="s:string" />
+          <s:element minOccurs="1" maxOccurs="1" name="isGlobal" type="s:boolean" />
+          <s:element minOccurs="1" maxOccurs="1" name="customName" type="s:string" />
+          <s:element minOccurs="1" maxOccurs="1" name="customOrder" type="s:string" />
+        </s:sequence>
+      </s:complexType>
+      <s:complexType name="SearchAttributes">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="unbounded" name="item_SearchAttribute" type="tns:SearchAttribute" />
+        </s:sequence>
+      </s:complexType>
+      <s:complexType name="Classificator">
+        <s:sequence>
+          <s:element minOccurs="1" maxOccurs="1" name="id" type="s:int" />
+          <s:element minOccurs="1" maxOccurs="1" name="name" type="s:string" />
+          <s:element minOccurs="1" maxOccurs="1" name="hasChildren" type="s:boolean" />
+        </s:sequence>
+      </s:complexType>
+      <s:complexType name="ArrayOfClassificator">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="unbounded" name="item_Classificator" type="tns:Classificator" />
+        </s:sequence>
+      </s:complexType>
+      <s:complexType name="Classificators">
+        <s:sequence>
+          <s:element minOccurs="1" maxOccurs="1" name="list" type="tns:ArrayOfClassificator" />
+        </s:sequence>
+      </s:complexType>
+      <s:complexType name="Area">
+        <s:sequence>
+          <s:element minOccurs="1" maxOccurs="1" name="id" type="s:int" />
+          <s:element minOccurs="1" maxOccurs="1" name="name" type="s:string" />
+          <s:element minOccurs="1" maxOccurs="1" name="attrs" type="tns:SearchAttributes" />
+        </s:sequence>
+      </s:complexType>
+      <s:complexType name="Areas">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="unbounded" name="item_Area" type="tns:Area" />
+        </s:sequence>
+      </s:complexType>
+      <s:complexType name="SearchCondition">
+        <s:sequence>
+          <s:element minOccurs="1" maxOccurs="1" name="id" type="s:int" />
+          <s:element minOccurs="1" maxOccurs="1" name="value" type="s:string" />
+        </s:sequence>
+      </s:complexType>
+      <s:complexType name="SearchConditionString">
+        <s:sequence>
+          <s:element minOccurs="1" maxOccurs="1" name="id" type="s:int" />
+          <s:element minOccurs="1" maxOccurs="1" name="value" type="s:string" />
+        </s:sequence>
+      </s:complexType>
+      <s:complexType name="SearchConditionNumber">
+        <s:sequence>
+          <s:element minOccurs="1" maxOccurs="1" name="id" type="s:int" />
+          <s:element minOccurs="1" maxOccurs="1" name="value" type="s:string" />
+          <s:element minOccurs="1" maxOccurs="1" name="mode" type="s:int" />
+        </s:sequence>
+      </s:complexType>
+      <s:complexType name="ArrayOfstring">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="unbounded" name="string" type="s:string" />
+        </s:sequence>
+      </s:complexType>
+      <s:complexType name="SearchConditionDate">
+        <s:sequence>
+          <s:element minOccurs="1" maxOccurs="1" name="id" type="s:int" />
+          <s:element minOccurs="1" maxOccurs="1" name="values" type="tns:ArrayOfstring" />
+          <s:element minOccurs="1" maxOccurs="1" name="mode" type="s:int" />
+        </s:sequence>
+      </s:complexType>
+      <s:complexType name="ArrayOffloat">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="unbounded" name="float" type="s:float" />
+        </s:sequence>
+      </s:complexType>
+      <s:complexType name="SearchConditionDouble">
+        <s:sequence>
+          <s:element minOccurs="1" maxOccurs="1" name="id" type="s:int" />
+          <s:element minOccurs="1" maxOccurs="1" name="values" type="tns:ArrayOffloat" />
+          <s:element minOccurs="1" maxOccurs="1" name="mode" type="s:int" />
+        </s:sequence>
+      </s:complexType>
+      <s:complexType name="ArrayOfint">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="unbounded" name="int" type="s:int" />
+        </s:sequence>
+      </s:complexType>
+      <s:complexType name="SearchConditionClassificator">
+        <s:sequence>
+          <s:element minOccurs="1" maxOccurs="1" name="id" type="s:int" />
+          <s:element minOccurs="1" maxOccurs="1" name="values" type="tns:ArrayOfint" />
+          <s:element minOccurs="1" maxOccurs="1" name="lop" type="s:string" />
+        </s:sequence>
+      </s:complexType>
+      <s:complexType name="DocListInfo">
+        <s:sequence>
+          <s:element minOccurs="1" maxOccurs="1" name="id" type="s:string" />
+          <s:element minOccurs="1" maxOccurs="1" name="size" type="s:long" />
+          <s:element minOccurs="1" maxOccurs="1" name="parts" type="s:long" />
+          <s:element minOccurs="1" maxOccurs="1" name="dpp" type="s:long" />
+        </s:sequence>
+      </s:complexType>
+      <s:complexType name="OrderListItem">
+        <s:sequence>
+          <s:element minOccurs="1" maxOccurs="1" name="order" type="s:string" />
+          <s:element minOccurs="1" maxOccurs="1" name="name" type="s:string" />
+          <s:element minOccurs="1" maxOccurs="1" name="defaultOrder" type="s:boolean" />
+        </s:sequence>
+      </s:complexType>
+      <s:complexType name="DocListItem">
+        <s:sequence>
+          <s:element minOccurs="1" maxOccurs="1" name="nd" type="s:int" />
+          <s:element minOccurs="1" maxOccurs="1" name="r" type="s:int" />
+          <s:element minOccurs="1" maxOccurs="1" name="type" type="s:string" />
+          <s:element minOccurs="1" maxOccurs="1" name="name" type="s:string" />
+          <s:element minOccurs="1" maxOccurs="1" name="info" type="s:string" />
+          <s:element minOccurs="1" maxOccurs="1" name="haskdoc" type="s:boolean" />
+        </s:sequence>
+      </s:complexType>
+      <s:complexType name="DocumentTab">
+        <s:sequence>
+          <s:element minOccurs="1" maxOccurs="1" name="name" type="s:string" />
+          <s:element minOccurs="1" maxOccurs="1" name="type" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="content" type="s:string" />
+        </s:sequence>
+      </s:complexType>
+      <s:complexType name="ArrayOfDocumentTab">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="unbounded" name="item_DocumentTab" type="tns:DocumentTab" />
+        </s:sequence>
+      </s:complexType>
+      <s:complexType name="DocumentContent">
+        <s:sequence>
+          <s:element minOccurs="1" maxOccurs="1" name="name" type="s:string" />
+          <s:element minOccurs="1" maxOccurs="1" name="status" type="s:string" />
+          <s:element minOccurs="1" maxOccurs="1" name="tabs" type="tns:ArrayOfDocumentTab" />
+        </s:sequence>
+      </s:complexType>
+      <s:complexType name="UrlContent">
+        <s:sequence>
+          <s:element minOccurs="1" maxOccurs="1" name="type" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="url" type="s:string" />
+        </s:sequence>
+      </s:complexType>
+      <s:complexType name="ArrayOfUrlContent">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="unbounded" name="item_UrlContent" type="tns:UrlContent" />
+        </s:sequence>
+      </s:complexType>
+      <s:complexType name="DocumentTabEx">
+        <s:sequence>
+          <s:element minOccurs="1" maxOccurs="1" name="contentND" type="s:int" />
+          <s:element minOccurs="1" maxOccurs="1" name="contentType" type="s:string" />
+          <s:element minOccurs="1" maxOccurs="1" name="nh" type="s:int" />
+          <s:element minOccurs="1" maxOccurs="1" name="state" type="s:string" />
+          <s:element minOccurs="1" maxOccurs="1" name="title" type="s:string" />
+          <s:element minOccurs="1" maxOccurs="1" name="urlParams" type="s:string" />
+          <s:element minOccurs="1" maxOccurs="1" name="urlContent" type="tns:ArrayOfUrlContent" />
+        </s:sequence>
+      </s:complexType>
+      <s:complexType name="ArrayOfDocumentTabEx">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="unbounded" name="item_DocumentTabEx" type="tns:DocumentTabEx" />
+        </s:sequence>
+      </s:complexType>
+      <s:complexType name="DocumentTabs">
+        <s:sequence>
+          <s:element minOccurs="1" maxOccurs="1" name="type" type="s:int" />
+          <s:element minOccurs="1" maxOccurs="1" name="txttab" type="s:int" />
+          <s:element minOccurs="1" maxOccurs="1" name="urlBasePath" type="s:string" />
+          <s:element minOccurs="1" maxOccurs="1" name="tabs" type="tns:ArrayOfDocumentTabEx" />
+        </s:sequence>
+      </s:complexType>
+      <s:complexType name="DjvuPageInfo">
+        <s:sequence>
+          <s:element minOccurs="1" maxOccurs="1" name="width" type="s:int" />
+          <s:element minOccurs="1" maxOccurs="1" name="height" type="s:int" />
+          <s:element minOccurs="1" maxOccurs="1" name="dpi" type="s:int" />
+          <s:element minOccurs="1" maxOccurs="1" name="pageNum" type="s:int" />
+          <s:element minOccurs="1" maxOccurs="1" name="url" type="s:string" />
+        </s:sequence>
+      </s:complexType>
+      <s:complexType name="ArrayOfDjvuPageInfo">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="unbounded" name="item_DjvuPageInfo" type="tns:DjvuPageInfo" />
+        </s:sequence>
+      </s:complexType>
+      <s:complexType name="DjvuDocInfo">
+        <s:sequence>
+          <s:element minOccurs="1" maxOccurs="1" name="nd" type="s:int" />
+          <s:element minOccurs="1" maxOccurs="1" name="hidx" type="s:int" />
+          <s:element minOccurs="0" maxOccurs="1" name="r" type="s:string" />
+          <s:element minOccurs="1" maxOccurs="1" name="pageCount" type="s:int" />
+          <s:element minOccurs="1" maxOccurs="1" name="url" type="s:string" />
+          <s:element minOccurs="1" maxOccurs="1" name="pages" type="tns:ArrayOfDjvuPageInfo" />
+        </s:sequence>
+      </s:complexType>
+      <s:complexType name="DocumentAttribute">
+        <s:sequence>
+          <s:element minOccurs="1" maxOccurs="1" name="attr" type="s:int" />
+          <s:element minOccurs="1" maxOccurs="1" name="name" type="s:string" />
+          <s:element minOccurs="1" maxOccurs="1" name="type" type="s:int" />
+        </s:sequence>
+      </s:complexType>
+      <s:complexType name="DocumentAttributes">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="unbounded" name="item_DocumentAttribute" type="tns:DocumentAttribute" />
+        </s:sequence>
+      </s:complexType>
+      <s:complexType name="AttributeValue">
+        <s:sequence>
+          <s:element minOccurs="1" maxOccurs="1" name="name" type="s:string" />
+          <s:element minOccurs="1" maxOccurs="1" name="type" type="s:int" />
+          <s:element minOccurs="0" maxOccurs="1" name="value" type="s:string" />
+        </s:sequence>
+      </s:complexType>
+      <s:complexType name="AttributeValues">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="unbounded" name="item_AttributeValue" type="tns:AttributeValue" />
+        </s:sequence>
+      </s:complexType>
+      <s:complexType name="NewDocsCounter">
+        <s:sequence>
+          <s:element minOccurs="1" maxOccurs="1" name="numNew" type="s:int" />
+          <s:element minOccurs="1" maxOccurs="1" name="numChanged" type="s:int" />
+          <s:element minOccurs="1" maxOccurs="1" name="productNd" type="s:int" />
+          <s:element minOccurs="1" maxOccurs="1" name="productName" type="s:string" />
+          <s:element minOccurs="1" maxOccurs="1" name="newURL" type="s:string" />
+          <s:element minOccurs="1" maxOccurs="1" name="changedURL" type="s:string" />
+        </s:sequence>
+      </s:complexType>
+      <s:complexType name="NewDocsCounters">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="unbounded" name="item_NewDocsCounter" type="tns:NewDocsCounter" />
+        </s:sequence>
+      </s:complexType>
+      <s:complexType name="NewsTape">
+        <s:sequence>
+          <s:element minOccurs="1" maxOccurs="1" name="date" type="s:string" />
+          <s:element minOccurs="1" maxOccurs="1" name="id" type="s:int" />
+          <s:element minOccurs="1" maxOccurs="1" name="title" type="s:string" />
+        </s:sequence>
+      </s:complexType>
+      <s:complexType name="ArrayOfNewsTape">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="unbounded" name="item_NewsTape" type="tns:NewsTape" />
+        </s:sequence>
+      </s:complexType>
+      <s:complexType name="NewsList">
+        <s:sequence>
+          <s:element minOccurs="1" maxOccurs="1" name="id" type="s:int" />
+          <s:element minOccurs="1" maxOccurs="1" name="news" type="tns:ArrayOfNewsTape" />
+          <s:element minOccurs="1" maxOccurs="1" name="title" type="s:string" />
+        </s:sequence>
+      </s:complexType>
+      <s:complexType name="NewsLists">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="unbounded" name="item_NewsList" type="tns:NewsList" />
+        </s:sequence>
+      </s:complexType>
+      <s:complexType name="DocTooltip">
+        <s:sequence>
+          <s:element minOccurs="1" maxOccurs="1" name="name" type="s:string" />
+          <s:element minOccurs="1" maxOccurs="1" name="info" type="s:string" />
+          <s:element minOccurs="1" maxOccurs="1" name="status" type="s:string" />
+        </s:sequence>
+      </s:complexType>
+      <s:complexType name="Change">
+        <s:sequence>
+          <s:element minOccurs="1" maxOccurs="1" name="date" type="s:string" />
+          <s:element minOccurs="1" maxOccurs="1" name="text" type="s:string" />
+        </s:sequence>
+      </s:complexType>
+      <s:complexType name="ArrayOfChange">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="unbounded" name="item_Change" type="tns:Change" />
+        </s:sequence>
+      </s:complexType>
+      <s:complexType name="ChangesForDoc">
+        <s:sequence>
+          <s:element minOccurs="1" maxOccurs="1" name="nd" type="s:int" />
+          <s:element minOccurs="1" maxOccurs="1" name="changes" type="tns:ArrayOfChange" />
+        </s:sequence>
+      </s:complexType>
+      <s:complexType name="ChangesForDocs">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="unbounded" name="item_ChangesForDoc" type="tns:ChangesForDoc" />
+        </s:sequence>
+      </s:complexType>
+      <s:complexType name="DocsInfoAttrItem">
+        <s:sequence>
+          <s:element minOccurs="1" maxOccurs="1" name="name" type="s:string" />
+          <s:element minOccurs="1" maxOccurs="1" name="attr" type="s:int" />
+          <s:element minOccurs="1" maxOccurs="1" name="type" type="s:int" />
+          <s:element minOccurs="0" maxOccurs="1" name="value" type="s:string" />
+          <s:element minOccurs="1" maxOccurs="1" name="description" type="s:string" />
+        </s:sequence>
+      </s:complexType>
+      <s:complexType name="ArrayOfDocsInfoAttrItem">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="unbounded" name="item_DocsInfoAttrItem" type="tns:DocsInfoAttrItem" />
+        </s:sequence>
+      </s:complexType>
+      <s:complexType name="DocsInfoItem">
+        <s:sequence>
+          <s:element minOccurs="1" maxOccurs="1" name="nd" type="s:int" />
+          <s:element minOccurs="1" maxOccurs="1" name="attrs" type="tns:ArrayOfDocsInfoAttrItem" />
+        </s:sequence>
+      </s:complexType>
+      <s:complexType name="BillingStatus">
+        <s:sequence>
+          <s:element minOccurs="1" maxOccurs="1" name="billing" type="s:string" />
+          <s:element minOccurs="1" maxOccurs="1" name="max" type="s:int" />
+          <s:element minOccurs="1" maxOccurs="1" name="cnt" type="s:int" />
+        </s:sequence>
+      </s:complexType>
+      <s:complexType name="ThesObj">
+        <s:sequence>
+          <s:element minOccurs="1" maxOccurs="1" name="nd" type="s:int" />
+          <s:element minOccurs="1" maxOccurs="1" name="phrases" type="s:string" />
+          <s:element minOccurs="1" maxOccurs="1" name="title" type="s:string" />
+          <s:element minOccurs="1" maxOccurs="1" name="status" type="s:string" />
+        </s:sequence>
+      </s:complexType>
+      <s:complexType name="ArrayOfThesObj">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="unbounded" name="item_ThesObj" type="tns:ThesObj" />
+        </s:sequence>
+      </s:complexType>
+      <s:complexType name="ThesObjs">
+        <s:sequence>
+          <s:element minOccurs="1" maxOccurs="1" name="offsetj" type="s:int" />
+          <s:element minOccurs="1" maxOccurs="1" name="offseti" type="s:int" />
+          <s:element minOccurs="1" maxOccurs="1" name="objs" type="tns:ArrayOfThesObj" />
+        </s:sequence>
+      </s:complexType>
+      <s:complexType name="ArrayOfanyType">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="unbounded" name="anyType" nillable="true" type="s:string" />
+        </s:sequence>
+      </s:complexType>
+      <s:complexType name="ArrayOfOrderListItem">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="unbounded" name="item_OrderListItem" type="tns:OrderListItem" />
+        </s:sequence>
+      </s:complexType>
+      <s:complexType name="ArrayOfDocListItem">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="unbounded" name="item_DocListItem" type="tns:DocListItem" />
+        </s:sequence>
+      </s:complexType>
+      <s:complexType name="ArrayOfDocsInfoItem">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="unbounded" name="item_DocsInfoItem" type="tns:DocsInfoItem" />
+        </s:sequence>
+      </s:complexType>
+      <s:complexType name="ArrayOfBillingStatus">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="unbounded" name="item_BillingStatus" type="tns:BillingStatus" />
+        </s:sequence>
+      </s:complexType>
+    </s:schema>
+  </wsdl:types>
+  <wsdl:message name="GetSearchAreasSoapIn">
+    <wsdl:part name="arg0" type="s:string" />
+  </wsdl:message>
+  <wsdl:message name="GetSearchAreasSoapOut">
+    <wsdl:part name="Areas" type="tns:Areas" />
+  </wsdl:message>
+  <wsdl:message name="GetSearchAttributesSoapIn">
+    <wsdl:part name="arg0" type="s:string" />
+  </wsdl:message>
+  <wsdl:message name="GetSearchAttributesSoapOut">
+    <wsdl:part name="SearchAttributes" type="tns:SearchAttributes" />
+  </wsdl:message>
+  <wsdl:message name="GetClassificatorsSoapIn">
+    <wsdl:part name="arg0" type="s:int" />
+    <wsdl:part name="arg1" type="s:int" />
+    <wsdl:part name="arg2" type="s:anyType" />
+    <wsdl:part name="arg3" type="s:string" />
+    <wsdl:part name="arg4" type="s:string" />
+  </wsdl:message>
+  <wsdl:message name="GetClassificatorsSoapOut">
+    <wsdl:part name="Classificators" type="tns:Classificators" />
+  </wsdl:message>
+  <wsdl:message name="AttrSearchSoapIn">
+    <wsdl:part name="arg0" type="tns:ArrayOfanyType" />
+    <wsdl:part name="arg1" type="s:string" />
+    <wsdl:part name="arg2" type="s:int" />
+  </wsdl:message>
+  <wsdl:message name="AttrSearchSoapOut">
+    <wsdl:part name="DocListInfo" type="tns:DocListInfo" />
+  </wsdl:message>
+  <wsdl:message name="FilterListSoapIn">
+    <wsdl:part name="arg0" type="tns:ArrayOfanyType" />
+    <wsdl:part name="arg1" type="s:string" />
+    <wsdl:part name="arg2" type="s:string" />
+  </wsdl:message>
+  <wsdl:message name="FilterListSoapOut">
+    <wsdl:part name="DocListInfo" type="tns:DocListInfo" />
+  </wsdl:message>
+  <wsdl:message name="FuzzySearchSoapIn">
+    <wsdl:part name="arg0" type="s:string" />
+    <wsdl:part name="arg1" type="s:string" />
+    <wsdl:part name="arg2" type="s:int" />
+    <wsdl:part name="arg3" type="s:string" />
+    <wsdl:part name="arg4" type="s:string" />
+  </wsdl:message>
+  <wsdl:message name="FuzzySearchSoapOut">
+    <wsdl:part name="DocListInfo" type="tns:DocListInfo" />
+  </wsdl:message>
+  <wsdl:message name="GetSearchListOrdersSoapIn">
+    <wsdl:part name="arg0" type="s:string" />
+    <wsdl:part name="arg1" type="s:string" />
+  </wsdl:message>
+  <wsdl:message name="GetSearchListOrdersSoapOut">
+    <wsdl:part name="ArrayOfOrderListItem" type="tns:ArrayOfOrderListItem" />
+  </wsdl:message>
+  <wsdl:message name="GetSearchListSoapIn">
+    <wsdl:part name="arg0" type="s:string" />
+    <wsdl:part name="arg1" type="s:anyType" />
+    <wsdl:part name="arg2" type="s:int" />
+    <wsdl:part name="arg3" type="s:string" />
+    <wsdl:part name="arg4" type="s:string" />
+  </wsdl:message>
+  <wsdl:message name="GetSearchListSoapOut">
+    <wsdl:part name="ArrayOfDocListItem" type="tns:ArrayOfDocListItem" />
+  </wsdl:message>
+  <wsdl:message name="GetDocumentSoapIn">
+    <wsdl:part name="arg0" type="s:int" />
+    <wsdl:part name="arg1" type="s:int" />
+    <wsdl:part name="arg2" type="s:anyType" />
+    <wsdl:part name="arg3" type="s:string" />
+    <wsdl:part name="arg4" type="s:boolean" />
+    <wsdl:part name="arg5" type="s:boolean" />
+  </wsdl:message>
+  <wsdl:message name="GetDocumentSoapOut">
+    <wsdl:part name="DocumentContent" type="tns:DocumentContent" />
+  </wsdl:message>
+  <wsdl:message name="GetDocumentAttributesSoapIn">
+    <wsdl:part name="arg0" type="s:int" />
+  </wsdl:message>
+  <wsdl:message name="GetDocumentAttributesSoapOut">
+    <wsdl:part name="DocumentAttributes" type="tns:DocumentAttributes" />
+  </wsdl:message>
+  <wsdl:message name="GetDocumentTabsSoapIn">
+    <wsdl:part name="arg0" type="s:int" />
+  </wsdl:message>
+  <wsdl:message name="GetDocumentTabsSoapOut">
+    <wsdl:part name="DocumentTabs" type="tns:DocumentTabs" />
+  </wsdl:message>
+  <wsdl:message name="GetAttributeValuesSoapIn">
+    <wsdl:part name="arg0" type="s:int" />
+    <wsdl:part name="arg1" type="s:int" />
+  </wsdl:message>
+  <wsdl:message name="GetAttributeValuesSoapOut">
+    <wsdl:part name="AttributeValues" type="tns:AttributeValues" />
+  </wsdl:message>
+  <wsdl:message name="GetNewDocsCountersSoapIn" />
+  <wsdl:message name="GetNewDocsCountersSoapOut">
+    <wsdl:part name="NewDocsCounters" type="tns:NewDocsCounters" />
+  </wsdl:message>
+  <wsdl:message name="GetNewsListsSoapIn" />
+  <wsdl:message name="GetNewsListsSoapOut">
+    <wsdl:part name="NewsLists" type="tns:NewsLists" />
+  </wsdl:message>
+  <wsdl:message name="GetTooltipDocSoapIn">
+    <wsdl:part name="arg0" type="s:int" />
+  </wsdl:message>
+  <wsdl:message name="GetTooltipDocSoapOut">
+    <wsdl:part name="string" type="s:string" />
+  </wsdl:message>
+  <wsdl:message name="GetDocTooltipSoapIn">
+    <wsdl:part name="arg0" type="s:int" />
+  </wsdl:message>
+  <wsdl:message name="GetDocTooltipSoapOut">
+    <wsdl:part name="DocTooltip" type="tns:DocTooltip" />
+  </wsdl:message>
+  <wsdl:message name="GetChangesForDocsSoapIn">
+    <wsdl:part name="arg0" type="tns:ArrayOfint" />
+    <wsdl:part name="arg1" type="s:string" />
+    <wsdl:part name="arg2" type="s:string" />
+  </wsdl:message>
+  <wsdl:message name="GetChangesForDocsSoapOut">
+    <wsdl:part name="ChangesForDocs" type="tns:ChangesForDocs" />
+  </wsdl:message>
+  <wsdl:message name="GetDocsInfoSoapIn">
+    <wsdl:part name="arg0" type="s:string" />
+    <wsdl:part name="arg1" type="s:string" />
+  </wsdl:message>
+  <wsdl:message name="GetDocsInfoSoapOut">
+    <wsdl:part name="ArrayOfDocsInfoItem" type="tns:ArrayOfDocsInfoItem" />
+  </wsdl:message>
+  <wsdl:message name="GetNewDocsSoapIn">
+    <wsdl:part name="arg0" type="s:string" />
+    <wsdl:part name="arg1" type="s:string" />
+  </wsdl:message>
+  <wsdl:message name="GetNewDocsSoapOut">
+    <wsdl:part name="ArrayOfint" type="tns:ArrayOfint" />
+  </wsdl:message>
+  <wsdl:message name="GetModDocsSoapIn">
+    <wsdl:part name="arg0" type="s:string" />
+    <wsdl:part name="arg1" type="s:string" />
+    <wsdl:part name="arg2" type="s:string" />
+  </wsdl:message>
+  <wsdl:message name="GetModDocsSoapOut">
+    <wsdl:part name="ArrayOfint" type="tns:ArrayOfint" />
+  </wsdl:message>
+  <wsdl:message name="GetBillingStatusSoapIn" />
+  <wsdl:message name="GetBillingStatusSoapOut">
+    <wsdl:part name="ArrayOfBillingStatus" type="tns:ArrayOfBillingStatus" />
+  </wsdl:message>
+  <wsdl:message name="GetThesObjsSoapIn">
+    <wsdl:part name="arg0" type="s:int" />
+    <wsdl:part name="arg1" type="s:int" />
+    <wsdl:part name="arg2" type="s:int" />
+    <wsdl:part name="arg3" type="s:string" />
+    <wsdl:part name="arg4" type="s:string" />
+  </wsdl:message>
+  <wsdl:message name="GetThesObjsSoapOut">
+    <wsdl:part name="ThesObjs" type="tns:ThesObjs" />
+  </wsdl:message>
+  <wsdl:portType name="apiSoap">
+    <wsdl:operation name="GetSearchAreas">
+      <wsdl:input message="tns:GetSearchAreasSoapIn" />
+      <wsdl:output message="tns:GetSearchAreasSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="GetSearchAttributes">
+      <wsdl:input message="tns:GetSearchAttributesSoapIn" />
+      <wsdl:output message="tns:GetSearchAttributesSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="GetClassificators">
+      <wsdl:input message="tns:GetClassificatorsSoapIn" />
+      <wsdl:output message="tns:GetClassificatorsSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="AttrSearch">
+      <wsdl:input message="tns:AttrSearchSoapIn" />
+      <wsdl:output message="tns:AttrSearchSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="FilterList">
+      <wsdl:input message="tns:FilterListSoapIn" />
+      <wsdl:output message="tns:FilterListSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="FuzzySearch">
+      <wsdl:input message="tns:FuzzySearchSoapIn" />
+      <wsdl:output message="tns:FuzzySearchSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="GetSearchListOrders">
+      <wsdl:input message="tns:GetSearchListOrdersSoapIn" />
+      <wsdl:output message="tns:GetSearchListOrdersSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="GetSearchList">
+      <wsdl:input message="tns:GetSearchListSoapIn" />
+      <wsdl:output message="tns:GetSearchListSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="GetDocument">
+      <wsdl:input message="tns:GetDocumentSoapIn" />
+      <wsdl:output message="tns:GetDocumentSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="GetDocumentAttributes">
+      <wsdl:input message="tns:GetDocumentAttributesSoapIn" />
+      <wsdl:output message="tns:GetDocumentAttributesSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="GetDocumentTabs">
+      <wsdl:input message="tns:GetDocumentTabsSoapIn" />
+      <wsdl:output message="tns:GetDocumentTabsSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="GetAttributeValues">
+      <wsdl:input message="tns:GetAttributeValuesSoapIn" />
+      <wsdl:output message="tns:GetAttributeValuesSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="GetNewDocsCounters">
+      <wsdl:input message="tns:GetNewDocsCountersSoapIn" />
+      <wsdl:output message="tns:GetNewDocsCountersSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="GetNewsLists">
+      <wsdl:input message="tns:GetNewsListsSoapIn" />
+      <wsdl:output message="tns:GetNewsListsSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="GetTooltipDoc">
+      <wsdl:input message="tns:GetTooltipDocSoapIn" />
+      <wsdl:output message="tns:GetTooltipDocSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="GetDocTooltip">
+      <wsdl:input message="tns:GetDocTooltipSoapIn" />
+      <wsdl:output message="tns:GetDocTooltipSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="GetChangesForDocs">
+      <wsdl:input message="tns:GetChangesForDocsSoapIn" />
+      <wsdl:output message="tns:GetChangesForDocsSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="GetDocsInfo">
+      <wsdl:input message="tns:GetDocsInfoSoapIn" />
+      <wsdl:output message="tns:GetDocsInfoSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="GetNewDocs">
+      <wsdl:input message="tns:GetNewDocsSoapIn" />
+      <wsdl:output message="tns:GetNewDocsSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="GetModDocs">
+      <wsdl:input message="tns:GetModDocsSoapIn" />
+      <wsdl:output message="tns:GetModDocsSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="GetBillingStatus">
+      <wsdl:input message="tns:GetBillingStatusSoapIn" />
+      <wsdl:output message="tns:GetBillingStatusSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="GetThesObjs">
+      <wsdl:input message="tns:GetThesObjsSoapIn" />
+      <wsdl:output message="tns:GetThesObjsSoapOut" />
+    </wsdl:operation>
+  </wsdl:portType>
+  <wsdl:binding name="apiSoap" type="tns:apiSoap">
+    <soap:binding transport="http://schemas.xmlsoap.org/soap/http" style="rpc" />
+    <wsdl:operation name="GetSearchAreas">
+      <soap:operation soapAction="http://kodekssoap.org/GetSearchAreas" />
+      <wsdl:input>
+        <soap:body use="literal" namespace="http://kodekssoap.org/" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" namespace="http://kodekssoap.org/" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetSearchAttributes">
+      <soap:operation soapAction="http://kodekssoap.org/GetSearchAttributes" />
+      <wsdl:input>
+        <soap:body use="literal" namespace="http://kodekssoap.org/" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" namespace="http://kodekssoap.org/" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetClassificators">
+      <soap:operation soapAction="http://kodekssoap.org/GetClassificators" />
+      <wsdl:input>
+        <soap:body use="literal" namespace="http://kodekssoap.org/" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" namespace="http://kodekssoap.org/" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="AttrSearch">
+      <soap:operation soapAction="http://kodekssoap.org/AttrSearch" />
+      <wsdl:input>
+        <soap:body use="literal" namespace="http://kodekssoap.org/" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" namespace="http://kodekssoap.org/" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="FilterList">
+      <soap:operation soapAction="http://kodekssoap.org/FilterList" />
+      <wsdl:input>
+        <soap:body use="literal" namespace="http://kodekssoap.org/" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" namespace="http://kodekssoap.org/" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="FuzzySearch">
+      <soap:operation soapAction="http://kodekssoap.org/FuzzySearch" />
+      <wsdl:input>
+        <soap:body use="literal" namespace="http://kodekssoap.org/" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" namespace="http://kodekssoap.org/" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetSearchListOrders">
+      <soap:operation soapAction="http://kodekssoap.org/GetSearchListOrders" />
+      <wsdl:input>
+        <soap:body use="literal" namespace="http://kodekssoap.org/" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" namespace="http://kodekssoap.org/" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetSearchList">
+      <soap:operation soapAction="http://kodekssoap.org/GetSearchList" />
+      <wsdl:input>
+        <soap:body use="literal" namespace="http://kodekssoap.org/" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" namespace="http://kodekssoap.org/" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetDocument">
+      <soap:operation soapAction="http://kodekssoap.org/GetDocument" />
+      <wsdl:input>
+        <soap:body use="literal" namespace="http://kodekssoap.org/" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" namespace="http://kodekssoap.org/" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetDocumentAttributes">
+      <soap:operation soapAction="http://kodekssoap.org/GetDocumentAttributes" />
+      <wsdl:input>
+        <soap:body use="literal" namespace="http://kodekssoap.org/" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" namespace="http://kodekssoap.org/" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetDocumentTabs">
+      <soap:operation soapAction="http://kodekssoap.org/GetDocumentTabs" />
+      <wsdl:input>
+        <soap:body use="literal" namespace="http://kodekssoap.org/" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" namespace="http://kodekssoap.org/" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetAttributeValues">
+      <soap:operation soapAction="http://kodekssoap.org/GetAttributeValues" />
+      <wsdl:input>
+        <soap:body use="literal" namespace="http://kodekssoap.org/" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" namespace="http://kodekssoap.org/" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetNewDocsCounters">
+      <soap:operation soapAction="http://kodekssoap.org/GetNewDocsCounters" />
+      <wsdl:input>
+        <soap:body use="literal" namespace="http://kodekssoap.org/" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" namespace="http://kodekssoap.org/" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetNewsLists">
+      <soap:operation soapAction="http://kodekssoap.org/GetNewsLists" />
+      <wsdl:input>
+        <soap:body use="literal" namespace="http://kodekssoap.org/" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" namespace="http://kodekssoap.org/" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetTooltipDoc">
+      <soap:operation soapAction="http://kodekssoap.org/GetTooltipDoc" />
+      <wsdl:input>
+        <soap:body use="literal" namespace="http://kodekssoap.org/" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" namespace="http://kodekssoap.org/" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetDocTooltip">
+      <soap:operation soapAction="http://kodekssoap.org/GetDocTooltip" />
+      <wsdl:input>
+        <soap:body use="literal" namespace="http://kodekssoap.org/" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" namespace="http://kodekssoap.org/" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetChangesForDocs">
+      <soap:operation soapAction="http://kodekssoap.org/GetChangesForDocs" />
+      <wsdl:input>
+        <soap:body use="literal" namespace="http://kodekssoap.org/" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" namespace="http://kodekssoap.org/" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetDocsInfo">
+      <soap:operation soapAction="http://kodekssoap.org/GetDocsInfo" />
+      <wsdl:input>
+        <soap:body use="literal" namespace="http://kodekssoap.org/" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" namespace="http://kodekssoap.org/" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetNewDocs">
+      <soap:operation soapAction="http://kodekssoap.org/GetNewDocs" />
+      <wsdl:input>
+        <soap:body use="literal" namespace="http://kodekssoap.org/" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" namespace="http://kodekssoap.org/" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetModDocs">
+      <soap:operation soapAction="http://kodekssoap.org/GetModDocs" />
+      <wsdl:input>
+        <soap:body use="literal" namespace="http://kodekssoap.org/" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" namespace="http://kodekssoap.org/" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetBillingStatus">
+      <soap:operation soapAction="http://kodekssoap.org/GetBillingStatus" />
+      <wsdl:input>
+        <soap:body use="literal" namespace="http://kodekssoap.org/" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" namespace="http://kodekssoap.org/" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetThesObjs">
+      <soap:operation soapAction="http://kodekssoap.org/GetThesObjs" />
+      <wsdl:input>
+        <soap:body use="literal" namespace="http://kodekssoap.org/" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" namespace="http://kodekssoap.org/" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
+      </wsdl:output>
+    </wsdl:operation>
+  </wsdl:binding>
+  <wsdl:service name="api">
+    <wsdl:port name="apiSoap" binding="tns:apiSoap">
+      <soap:address location="http://89.109.33.138:1210/docs/api" />
+    </wsdl:port>
+  </wsdl:service>
+</wsdl:definitions>

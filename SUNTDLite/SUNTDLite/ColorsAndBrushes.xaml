@@ -1,0 +1,13 @@
+﻿<ResourceDictionary 
+    x:Name="ColorsAndBrushes"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <Color x:Key="MainDarkBlue">#385284</Color>
+
+    <SolidColorBrush x:Key="MainTextBrush" Color="{StaticResource MainDarkBlue}"></SolidColorBrush>
+    <SolidColorBrush x:Key="MainSelectedBrush" Color="#70A4FF"></SolidColorBrush>
+    <SolidColorBrush x:Key="MainPressedBrush" Color="#765284"></SolidColorBrush>
+    <SolidColorBrush x:Key="BlackTextBrush" Color="Black"></SolidColorBrush>
+    <SolidColorBrush x:Key="WhiteTextBrush" Color="White"></SolidColorBrush>
+    <SolidColorBrush x:Key="GrayBrush" Color="LightGray"></SolidColorBrush>
+</ResourceDictionary>
