@@ -10,9 +10,19 @@ namespace SUNTDLite.View
         public DocumentString(string name, long attributeNumber) : base(name, attributeNumber) { }
         public string Value { get; set; }
 
-        public override string GetValueString()
+        public override void Clean()
         {
-            return Value;
+            Value = string.Empty;
+            OnPropertyChanged("Value");
+        }
+
+        public override IEnumerable<string> GetValueString()
+        {
+            if (!string.IsNullOrEmpty(Value))
+            {
+                return new string[] { Value };
+            }
+            return null;
         }
     }
 }

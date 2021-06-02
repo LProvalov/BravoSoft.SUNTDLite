@@ -8,11 +8,21 @@ namespace SUNTDLite.View
     public class DocumentDate : DocumentType
     {
         public DocumentDate(string name, long attributeNumber) : base(name, attributeNumber) { }
-        public DateTime Value { get; set; }
+        public Nullable<DateTime> Value { get; set; } = null;
 
-        public override string GetValueString()
+        public override void Clean()
         {
-            return Value.ToShortDateString();
+            Value = null;
+            OnPropertyChanged("Value");
+        }
+
+        public override IEnumerable<string> GetValueString()
+        {
+            if (Value != null)
+            {
+                return new string[] { Value?.ToShortDateString() };
+            }
+            return null;
         }
     }
 }

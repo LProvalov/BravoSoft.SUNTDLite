@@ -2,10 +2,11 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.ComponentModel;
 
 namespace SUNTDLite.View
 {
-    public abstract class DocumentType
+    public abstract class DocumentType : INotifyPropertyChanged
     {
         public event Action OnNameChanged;
         public DocumentType() { }
@@ -31,6 +32,14 @@ namespace SUNTDLite.View
             } 
         }
 
-        public abstract string GetValueString();
+        public abstract IEnumerable<string> GetValueString();
+
+        public abstract void Clean();
+
+        public event PropertyChangedEventHandler PropertyChanged;
+        protected virtual void OnPropertyChanged(string propertyName)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
     }
 }

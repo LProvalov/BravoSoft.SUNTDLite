@@ -8,6 +8,6 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-[assembly: System.Windows.Resources.AssemblyAssociatedContentFileAttribute("nlogconfig.xml")]
+[assembly: System.Windows.Resources.AssemblyAssociatedContentFileAttribute("app_icon.ico")]
 
 

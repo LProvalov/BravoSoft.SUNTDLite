@@ -18,7 +18,6 @@ namespace SUNTDLite.Services
 {
     public class KBDAPIService : ApplicationLogger
     {
-        private StringBuilder _logSb = new StringBuilder();
         private KBDAPI_docsSoapClient _client;
         private apiSoapClient _searchClient;
         private HttpClient _httpClient;
@@ -31,11 +30,6 @@ namespace SUNTDLite.Services
                 throw new Exception("Wrong application config file, it should have ServiceConfig parameters!");
             }
             _searchServiceConfig = searchServiceConfig;
-            //BasicHttpBinding binding = new BasicHttpBinding();
-            //binding.Name = "KBDAPI_docsSoap";
-            //binding.Security.Mode = BasicHttpSecurityMode.TransportCredentialOnly;
-            //binding.Security.Transport.ClientCredentialType = HttpClientCredentialType.Basic;
-            //binding.Security.Transport.ProxyCredentialType = HttpProxyCredentialType.None;            
 
             /* BASIC HTTP CONTEXT BINDING */
             BasicHttpContextBinding binding = new BasicHttpContextBinding(BasicHttpSecurityMode.TransportCredentialOnly);
@@ -47,25 +41,19 @@ namespace SUNTDLite.Services
             EndpointAddress ea = new EndpointAddress(endpointAddress);
             _client = new KBDAPI_docsSoapClient(binding, ea);
 
-            //_client = new KBDAPI_docsSoapClient();
-            _client.ClientCredentials.UserName.UserName = kbdServiceConfig.Username;
-            _client.ClientCredentials.UserName.Password = kbdServiceConfig.Password;
-            
+            _client.ClientCredentials.UserName.UserName = "apiuser";
+            _client.ClientCredentials.UserName.Password = "apiadm!";
+
+
             if (searchServiceConfig == null)
             {
                 LOG_ERROR($"SearchServiceConfig is null");
                 throw new Exception("Wrong applicaton config file, it should have SearchServiceConfig parameters!");
             }
-            //BasicHttpBinding ssBinding = new BasicHttpBinding();
-            //ssBinding.Security.Mode = BasicHttpSecurityMode.Transport;
-            //ssBinding.Security.Transport.ProxyCredentialType = HttpProxyCredentialType.None;
-
             BasicHttpContextBinding ssBinding = new BasicHttpContextBinding(BasicHttpSecurityMode.TransportCredentialOnly);
-            //WSHttpBinding ssBinding = new WSHttpBinding(SecurityMode.TransportWithMessageCredential);
             ssBinding.Name = "apiSoap";
             ssBinding.Security.Transport.ClientCredentialType = HttpClientCredentialType.Basic;
             string ssEndpointAddress = $"http://{searchServiceConfig.ServiceUrl}/{searchServiceConfig.EndpointUrl}";
-            //LOG_TRACE($"searchServiceEndpointAddress: {ssEndpointAddress}");
             EndpointAddress ssEa = new EndpointAddress(ssEndpointAddress);
             _searchClient = new apiSoapClient(ssBinding, ssEa);
             _searchClient.ClientCredentials.UserName.UserName = searchServiceConfig.Username;
@@ -104,9 +92,20 @@ namespace SUNTDLite.Services
         public IEnumerable<CardAttributeModel> GetCardAttributes()
         {
             LOG_TRACE($"GetCardAttributes");
+            var _logSb = new StringBuilder();
             if (_client != null)
             {
-                var attributes = _client.GetCardAttributes();
+                ArrayOfCardAttribute attributes;
+
+                using (OperationContextScope scope = new OperationContextScope(_client.InnerChannel))
+                {
+                    HttpRequestMessageProperty httpRequestProperty = new HttpRequestMessageProperty();
+                    httpRequestProperty.Headers[System.Net.HttpRequestHeader.Authorization] = "Basic " +
+                        Convert.ToBase64String(Encoding.ASCII.GetBytes(_client.ClientCredentials.UserName.UserName + ":" + _client.ClientCredentials.UserName.Password));
+                    OperationContext.Current.OutgoingMessageProperties[HttpRequestMessageProperty.Name] = httpRequestProperty;
+                    attributes = _client.GetCardAttributes();
+                }
+
                 if (attributes != null)
                 {
                     _logSb.Clear();
@@ -125,28 +124,112 @@ namespace SUNTDLite.Services
         public ClassificatorDescModel GetClassificatorDesc(CardAttributeModel cardAttribute)
         {
             LOG_TRACE($"GetClassificatorDesc");
+            var _logSb = new StringBuilder();
             if (_client != null && cardAttribute.AttributeType == AttributeType.Classificator)
             {
-                var classificatorDesc = _client.GetClassificatorDesc((int)cardAttribute.AttributeNumber, 0);
+                ClassificatorDesc classificatorDesc;
+
+                using (OperationContextScope scope = new OperationContextScope(_client.InnerChannel))
+                {
+                    HttpRequestMessageProperty httpRequestProperty = new HttpRequestMessageProperty();
+                    httpRequestProperty.Headers[System.Net.HttpRequestHeader.Authorization] = "Basic " +
+                        Convert.ToBase64String(Encoding.ASCII.GetBytes(_client.ClientCredentials.UserName.UserName + ":" + _client.ClientCredentials.UserName.Password));
+                    OperationContext.Current.OutgoingMessageProperties[HttpRequestMessageProperty.Name] = httpRequestProperty;
+                    classificatorDesc = _client.GetClassificatorDesc((int)cardAttribute.AttributeNumber, 0);
+                }
+
                 _logSb.Clear();
                 _logSb.Append(classificatorDesc.type).Append("/");
                 if (classificatorDesc != null && classificatorDesc.values.Any())
-                foreach(var item in classificatorDesc.values)
-                {
-                    _logSb.Append(item.oid).Append("/").Append(item.name).Append("\t");
-                }
+                    foreach (var item in classificatorDesc.values)
+                    {
+                        _logSb.Append(item.oid).Append("/").Append(item.name).Append("\t");
+                    }
                 LOG_TRACE($"{_logSb.ToString()}");
                 return new ClassificatorDescModel(classificatorDesc);
             }
             return null;
         }
 
+        public ClassificatorDescModel GetClassificatorExpDescRecursive(CardAttributeModel cardAttribute)
+        {
+            LOG_TRACE($"GetClassificatorExpDesc");
+            if (_client != null && cardAttribute.AttributeType == AttributeType.ClassificatorExp)
+            {
+                ClassificatorDesc classificatorDesc = null;
+                try
+                {
+                    using (OperationContextScope scope = new OperationContextScope(_client.InnerChannel))
+                    {
+                        HttpRequestMessageProperty httpRequestProperty = new HttpRequestMessageProperty();
+                        httpRequestProperty.Headers[System.Net.HttpRequestHeader.Authorization] = "Basic " +
+                            Convert.ToBase64String(Encoding.ASCII.GetBytes(_client.ClientCredentials.UserName.UserName + ":" + _client.ClientCredentials.UserName.Password));
+                        OperationContext.Current.OutgoingMessageProperties[HttpRequestMessageProperty.Name] = httpRequestProperty;
+                        classificatorDesc = _client.GetClassificatorDesc((int)cardAttribute.AttributeNumber, 0);
+                    }
+                }
+                catch (InvalidCastException)
+                { }
+
+                if (classificatorDesc != null)
+                {
+                    ClassificatorDescModel ret = new ClassificatorDescModel(classificatorDesc.type);
+
+                    foreach (var item in classificatorDesc.values)
+                    {
+                        var addedItem = new ClassificatorDescModel.ClassificatorDescModelItem(item.name, item.oid);
+                        ret.Values.Add(addedItem);
+                        GetClassificatorDescModelItemRecursive((int)cardAttribute.AttributeNumber, item.oid, addedItem.Childrens);
+                    }
+                    return ret;
+                }
+            }
+            return null;
+        }
+
+        private void GetClassificatorDescModelItemRecursive(int attributeNumber, int oid, List<ClassificatorDescModel.ClassificatorDescModelItem> item)
+        {
+            ClassificatorDesc classificatorDesc = null;
+            try
+            {
+                using (OperationContextScope scope = new OperationContextScope(_client.InnerChannel))
+                {
+                    HttpRequestMessageProperty httpRequestProperty = new HttpRequestMessageProperty();
+                    httpRequestProperty.Headers[System.Net.HttpRequestHeader.Authorization] = "Basic " +
+                        Convert.ToBase64String(Encoding.ASCII.GetBytes(_client.ClientCredentials.UserName.UserName + ":" + _client.ClientCredentials.UserName.Password));
+                    OperationContext.Current.OutgoingMessageProperties[HttpRequestMessageProperty.Name] = httpRequestProperty;
+                    classificatorDesc = _client.GetClassificatorDesc(attributeNumber, oid);
+                }
+            }
+            catch (InvalidCastException)
+            { }
+
+            if (classificatorDesc != null)
+            {
+                foreach (var value in classificatorDesc.values)
+                {
+                    var subItem = new ClassificatorDescModel.ClassificatorDescModelItem(value.name, value.oid);
+                    item.Add(subItem);
+                    GetClassificatorDescModelItemRecursive(attributeNumber, value.oid, subItem.Childrens);
+                }
+            }
+        }
         public ClassificatorDescModel GetClassificatorExpDesc(CardAttributeModel cardAttribute)
         {
             LOG_TRACE($"GetClassificatorExpDesc");
             if (_client != null && cardAttribute.AttributeType == AttributeType.ClassificatorExp)
             {
-                var classificatorDesc = _client.GetClassificatorDesc((int)cardAttribute.AttributeNumber, 0);
+                ClassificatorDesc classificatorDesc;
+
+                using (OperationContextScope scope = new OperationContextScope(_client.InnerChannel))
+                {
+                    HttpRequestMessageProperty httpRequestProperty = new HttpRequestMessageProperty();
+                    httpRequestProperty.Headers[System.Net.HttpRequestHeader.Authorization] = "Basic " +
+                        Convert.ToBase64String(Encoding.ASCII.GetBytes(_client.ClientCredentials.UserName.UserName + ":" + _client.ClientCredentials.UserName.Password));
+                    OperationContext.Current.OutgoingMessageProperties[HttpRequestMessageProperty.Name] = httpRequestProperty;
+                    classificatorDesc = _client.GetClassificatorDesc((int)cardAttribute.AttributeNumber, 0);
+                }
+
                 if (classificatorDesc != null)
                 {
                     ClassificatorDescModel ret = new ClassificatorDescModel(classificatorDesc);
@@ -154,13 +237,23 @@ namespace SUNTDLite.Services
                     {
                         try
                         {
-                            var extDesc = _client.GetClassificatorDesc((int)cardAttribute.AttributeNumber, item.oid);
+                            ClassificatorDesc extDesc;
+
+                            using (OperationContextScope scope = new OperationContextScope(_client.InnerChannel))
+                            {
+                                HttpRequestMessageProperty httpRequestProperty = new HttpRequestMessageProperty();
+                                httpRequestProperty.Headers[System.Net.HttpRequestHeader.Authorization] = "Basic " +
+                                    Convert.ToBase64String(Encoding.ASCII.GetBytes(_client.ClientCredentials.UserName.UserName + ":" + _client.ClientCredentials.UserName.Password));
+                                OperationContext.Current.OutgoingMessageProperties[HttpRequestMessageProperty.Name] = httpRequestProperty;
+                                extDesc = _client.GetClassificatorDesc((int)cardAttribute.AttributeNumber, item.oid);
+                            }
+
                             if (extDesc != null && extDesc.values.Any())
                             {
                                 ret.AddChilds(item.oid, extDesc.values);
                             }
                         }
-                        catch(InvalidCastException)
+                        catch (InvalidCastException)
                         { }
                     }
                     return ret;
@@ -169,15 +262,11 @@ namespace SUNTDLite.Services
             return null;
         }
 
-        public CardAttribute[] GetServiceAttributes()
-        {
-            throw new NotImplementedException();
-        }
 
         [Serializable]
         public class CreateCardAttribute
         {
-            
+
             public CreateCardAttribute()
             {
                 attrnum = -1;
@@ -203,7 +292,7 @@ namespace SUNTDLite.Services
 
                 StringBuilder sb = new StringBuilder();
                 sb.Append("[");
-                for(int i = 0; i < listofattributes.Count; i++)
+                for (int i = 0; i < listofattributes.Count; i++)
                 {
                     sb.Append($"{{\"attrnum\":{listofattributes[i].attrnum},\"value\":\"{listofattributes[i].value}\"}}");
                     if (i < listofattributes.Count - 1)
@@ -216,10 +305,20 @@ namespace SUNTDLite.Services
                 LOG_TRACE($"String of attributes: {stringOfAttributes}");
                 if (!string.IsNullOrEmpty(stringOfAttributes))
                 {
-                    var guid = _client.CreateCard(stringOfAttributes, formatOfAttributes);
+                    string guid;
+
+                    using (OperationContextScope scope = new OperationContextScope(_client.InnerChannel))
+                    {
+                        HttpRequestMessageProperty httpRequestProperty = new HttpRequestMessageProperty();
+                        httpRequestProperty.Headers[System.Net.HttpRequestHeader.Authorization] = "Basic " +
+                            Convert.ToBase64String(Encoding.ASCII.GetBytes(_client.ClientCredentials.UserName.UserName + ":" + _client.ClientCredentials.UserName.Password));
+                        OperationContext.Current.OutgoingMessageProperties[HttpRequestMessageProperty.Name] = httpRequestProperty;
+                        guid = _client.CreateCard(stringOfAttributes, formatOfAttributes);
+                    }
+
                     _requestGUIDList.Add(guid);
                     sb.Clear();
-                    foreach(var item in _requestGUIDList)
+                    foreach (var item in _requestGUIDList)
                     {
                         sb.Append(item).Append(",\t");
                     }
@@ -239,24 +338,11 @@ namespace SUNTDLite.Services
             Default
         }
 
-        public DocListInfo FuzzySearch(string searchString, SearchVariants variants, int searchIndex = -1)
+        public DocListInfo FuzzySearch(string searchString, int searchIndex = -1)
         {
-            LOG_TRACE($"FuzzySearch({searchString}, {Enum.GetName(typeof(SearchVariants), variants)}, {searchIndex})");
+            LOG_TRACE($"FuzzySearch({searchString}, {searchIndex})");
             if (_searchClient != null)
             {
-                string variantString = null;
-                switch (variants)
-                {
-                    case SearchVariants.SearchByName:
-                        variantString = "searchbynames";
-                        break;
-                    case SearchVariants.Archs:
-                        variantString = "archs";
-                        break;
-                    default:
-                        variantString = null;
-                        break;
-                }
                 string bparserStr = _httpClient?.HttpGetRequest($"/{_searchServiceConfig.BParserUrl}?parse=\"{searchString}\"");
                 LOG_TRACE($"bparserStr: {bparserStr}");
 
@@ -266,7 +352,7 @@ namespace SUNTDLite.Services
                     httpRequestProperty.Headers[System.Net.HttpRequestHeader.Authorization] = "Basic " +
                         Convert.ToBase64String(Encoding.ASCII.GetBytes(_searchClient.ClientCredentials.UserName.UserName + ":" + _searchClient.ClientCredentials.UserName.Password));
                     OperationContext.Current.OutgoingMessageProperties[HttpRequestMessageProperty.Name] = httpRequestProperty;
-                    var response = _searchClient.FuzzySearch(searchString, null, searchIndex, variantString, bparserStr);
+                    var response = _searchClient.FuzzySearch(searchString, null, searchIndex, null, bparserStr);
                     return response;
                 }
             }
@@ -286,7 +372,7 @@ namespace SUNTDLite.Services
                         Convert.ToBase64String(Encoding.ASCII.GetBytes(_searchClient.ClientCredentials.UserName.UserName + ":" + _searchClient.ClientCredentials.UserName.Password));
                     OperationContext.Current.OutgoingMessageProperties[HttpRequestMessageProperty.Name] = httpRequestProperty;
                     docListItems = _searchClient.GetSearchList(id, order, part, searchName, kdocfield);
-                }                
+                }
                 return docListItems.ToArray();
             }
             return null;
@@ -301,17 +387,35 @@ namespace SUNTDLite.Services
                 DocumentDesc docDesc;
                 try
                 {
-                    docDesc = _client.GetDocumentDesc(guidRequest);
+                    using (OperationContextScope scope = new OperationContextScope(_client.InnerChannel))
+                    {
+                        HttpRequestMessageProperty httpRequestProperty = new HttpRequestMessageProperty();
+                        httpRequestProperty.Headers[System.Net.HttpRequestHeader.Authorization] = "Basic " +
+                            Convert.ToBase64String(Encoding.ASCII.GetBytes(_client.ClientCredentials.UserName.UserName + ":" + _client.ClientCredentials.UserName.Password));
+                        OperationContext.Current.OutgoingMessageProperties[HttpRequestMessageProperty.Name] = httpRequestProperty;
+                        docDesc = _client.GetDocumentDesc(guidRequest);
+                    }
+
+                    return docDesc;
                 }
-                catch(CommunicationException cEx)
+                catch (CommunicationException)
                 {
                     LOG_TRACE($"Первый вызов не вернул результата, ожидаем 10сек и повторяем.");
                     Thread.Sleep(10 * 1000);
                     try
                     {
-                        docDesc = _client.GetDocumentDesc(guidRequest);
-                    } 
-                    catch(CommunicationException)
+                        using (OperationContextScope scope = new OperationContextScope(_client.InnerChannel))
+                        {
+                            HttpRequestMessageProperty httpRequestProperty = new HttpRequestMessageProperty();
+                            httpRequestProperty.Headers[System.Net.HttpRequestHeader.Authorization] = "Basic " +
+                                Convert.ToBase64String(Encoding.ASCII.GetBytes(_client.ClientCredentials.UserName.UserName + ":" + _client.ClientCredentials.UserName.Password));
+                            OperationContext.Current.OutgoingMessageProperties[HttpRequestMessageProperty.Name] = httpRequestProperty;
+                            docDesc = _client.GetDocumentDesc(guidRequest);
+                        }
+
+                        return docDesc;
+                    }
+                    catch (CommunicationException)
                     {
                         LOG_ERROR($"Запрос документа {guidRequest} не вернул результата в течении 20 секунд.");
                         return null;
@@ -327,7 +431,7 @@ namespace SUNTDLite.Services
             if (_client != null && file != null && file.Exists)
             {
                 string format;
-                switch (file.Extension)
+                switch (file.Extension.ToLower())
                 {
                     case ".pdf":
                         format = "pdf";
@@ -342,11 +446,40 @@ namespace SUNTDLite.Services
                         format = "rtf";
                         break;
                     default:
-                        throw new ArgumentException($"Возможно сохранять документы только с расширениями .pdf/.doc/.docx/.rtf, попытка сохранения документа *.{file.Extension}");
+                        LOG_ERROR($"Попытка сохранить документ в неизвестном формате {file.Extension}. Возможна ошибка при сохранении.");
+                        format = file.Extension.TrimStart('.');
+                        break;
                 }
                 var bytes = File.ReadAllBytes(file.FullName);
                 string base64str = Convert.ToBase64String(bytes);
-                return _client.SetText(oid, guid, format, base64str);
+
+                using (OperationContextScope scope = new OperationContextScope(_client.InnerChannel))
+                {
+                    HttpRequestMessageProperty httpRequestProperty = new HttpRequestMessageProperty();
+                    httpRequestProperty.Headers[System.Net.HttpRequestHeader.Authorization] = "Basic " +
+                        Convert.ToBase64String(Encoding.ASCII.GetBytes(_client.ClientCredentials.UserName.UserName + ":" + _client.ClientCredentials.UserName.Password));
+                    OperationContext.Current.OutgoingMessageProperties[HttpRequestMessageProperty.Name] = httpRequestProperty;
+                    return _client.SetText(oid, guid, format, base64str);
+                }
+            }
+            return null;
+        }
+
+        public string AddAttachments(int oid, string guid, FileInfo file)
+        {
+            if (_client != null && file != null && file.Exists)
+            {
+                var bytes = File.ReadAllBytes(file.FullName);
+                string base64str = Convert.ToBase64String(bytes);
+
+                using (OperationContextScope scope = new OperationContextScope(_client.InnerChannel))
+                {
+                    HttpRequestMessageProperty httpRequestProperty = new HttpRequestMessageProperty();
+                    httpRequestProperty.Headers[System.Net.HttpRequestHeader.Authorization] = "Basic " +
+                        Convert.ToBase64String(Encoding.ASCII.GetBytes(_client.ClientCredentials.UserName.UserName + ":" + _client.ClientCredentials.UserName.Password));
+                    OperationContext.Current.OutgoingMessageProperties[HttpRequestMessageProperty.Name] = httpRequestProperty;
+                    return _client.AddAttachment(oid, guid, file.Name, base64str, 0, 0, 0, 0, 0);
+                }
             }
             return null;
         }
@@ -355,7 +488,18 @@ namespace SUNTDLite.Services
         {
             if (_client != null && !string.IsNullOrEmpty(requestGuid))
             {
-                var status = _client.CheckRequestStatus(requestGuid);
+                var _logSb = new StringBuilder();
+                DocsSoapService.ArrayOfstring status; // = _client.CheckRequestStatus(requestGuid);
+
+                using (OperationContextScope scope = new OperationContextScope(_client.InnerChannel))
+                {
+                    HttpRequestMessageProperty httpRequestProperty = new HttpRequestMessageProperty();
+                    httpRequestProperty.Headers[System.Net.HttpRequestHeader.Authorization] = "Basic " +
+                        Convert.ToBase64String(Encoding.ASCII.GetBytes(_client.ClientCredentials.UserName.UserName + ":" + _client.ClientCredentials.UserName.Password));
+                    OperationContext.Current.OutgoingMessageProperties[HttpRequestMessageProperty.Name] = httpRequestProperty;
+                    status = _client.CheckRequestStatus(requestGuid);
+                }
+
                 _logSb.Clear();
                 if (status != null)
                 {
@@ -364,6 +508,22 @@ namespace SUNTDLite.Services
                         _logSb.Append(str).Append("\t");
                     }
                     return _logSb.ToString();
+                }
+            }
+            return null;
+        }
+
+        public string RemoveDocument(long uid)
+        {
+            if (_client != null && uid > 0)
+            {
+                using (OperationContextScope scope = new OperationContextScope(_client.InnerChannel))
+                {
+                    HttpRequestMessageProperty httpRequestProperty = new HttpRequestMessageProperty();
+                    httpRequestProperty.Headers[System.Net.HttpRequestHeader.Authorization] = "Basic " +
+                        Convert.ToBase64String(Encoding.ASCII.GetBytes(_client.ClientCredentials.UserName.UserName + ":" + _client.ClientCredentials.UserName.Password));
+                    OperationContext.Current.OutgoingMessageProperties[HttpRequestMessageProperty.Name] = httpRequestProperty;
+                    return _client.RemoveDocument((int)uid, null);
                 }
             }
             return null;

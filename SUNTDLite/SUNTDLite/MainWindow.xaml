@@ -11,9 +11,13 @@
     <Window.DataContext>
         <vm:MainWindowVM></vm:MainWindowVM>
     </Window.DataContext>
+    <Window.Resources>
+        <local:StarWidthConverter x:Key="starWidthConverter"></local:StarWidthConverter>
+    </Window.Resources>
     <ScrollViewer VerticalScrollBarVisibility="Hidden">
         <Grid Margin="100, 0, 100, 0">
             <Grid.RowDefinitions>
+                <RowDefinition Height="auto"></RowDefinition>
                 <RowDefinition Height="auto"></RowDefinition>
                 <RowDefinition Height="auto"></RowDefinition>
                 <RowDefinition Height="auto"></RowDefinition>
@@ -82,11 +86,17 @@
                     Margin="20,10,20,30"
                     Grid.Row="3"
                     Grid.Column="0"
+                    IsEnabled="{Binding ButtonSaveDocumentEnable}"
                     HorizontalAlignment="Stretch"
                     Style="{DynamicResource MainButton1}"
                     Command="{Binding SaveDocumentCommand}">Сохранить документ</Button>
 
-            <Grid
+            <TextBox Grid.Column="1" Grid.Row="3"
+                     Margin="10, 10, 0, 30"
+                     Visibility="{Binding AttributesLoadingVisibility}"
+                     IsReadOnly="True">Загрузка атрибутов...</TextBox>
+            <Grid 
+                Visibility="{Binding AttributeGridVisibility}"
                 Grid.Column="1" Grid.Row="3"
                 Margin="10, 10, 0, 30">
                 <Grid.ColumnDefinitions>
@@ -101,13 +111,15 @@
                 <ScrollViewer VerticalScrollBarVisibility="Auto"
                           MaxHeight="260"
                           Grid.Row="0" Grid.ColumnSpan="2">
-                    <ItemsControl ItemsSource="{Binding DocumentArguments}">
+                    <ItemsControl x:Name="itemsControl"
+                        ItemsSource="{Binding DocumentArguments}"
+                                  Margin="10,0,10,0">
                         <ItemsControl.Resources>
                             <DataTemplate DataType="{x:Type v:DocumentString}">
                                 <Grid Margin="0,5,0,5">
                                     <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="1*"></ColumnDefinition>
-                                        <ColumnDefinition Width="3*"></ColumnDefinition>
+                                        <ColumnDefinition Width="2*"></ColumnDefinition>
+                                        <ColumnDefinition Width="5*"></ColumnDefinition>
                                     </Grid.ColumnDefinitions>
                                     <Label
                                 Grid.Column="0" 
@@ -119,28 +131,32 @@
                                 Grid.Column="1"
                                 VerticalAlignment="Center" HorizontalAlignment="Stretch"
                                 Style="{StaticResource MainTextBox}"
-                                Text="{Binding Value}"/>
+                                Text="{Binding Value, UpdateSourceTrigger=PropertyChanged}"/>
                                 </Grid>
                             </DataTemplate>
 
                             <DataTemplate DataType="{x:Type v:DocumentDate}">
                                 <Grid Margin="0,5,0,5">
                                     <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="1*"></ColumnDefinition>
-                                        <ColumnDefinition Width="3*"></ColumnDefinition>
+                                        <ColumnDefinition Width="2*"></ColumnDefinition>
+                                        <ColumnDefinition Width="5*"></ColumnDefinition>
                                     </Grid.ColumnDefinitions>
                                     <Label
-                                Grid.Column="0" 
-                                Style="{StaticResource Normal}"
-                                HorizontalAlignment="Left" VerticalAlignment="Center"
-                                Content="{Binding Name}"/>
+                                        Grid.Column="0"
+                                        Style="{StaticResource Normal}"
+                                        HorizontalAlignment="Left" VerticalAlignment="Center"
+                                        Content="{Binding Name}">
+                                    </Label>
 
                                     <DatePicker
-                                Grid.Column="1"
-                                VerticalContentAlignment="Center"
-                                Height="28"
-                                Margin="0,0,20,0"
-                                SelectedDate="{Binding Value, UpdateSourceTrigger=PropertyChanged}">
+                                        Grid.Column="1"
+                                        VerticalContentAlignment="Center"
+                                        HorizontalAlignment="Left"
+                                        Width="180"
+                                        Height="28"
+                                        Margin="0,0,20,0"
+                                        SelectedDate="{Binding Value, UpdateSourceTrigger=PropertyChanged}"                                        
+                                        Validation.ErrorTemplate="{x:Null}">
                                     </DatePicker>
                                 </Grid>
                             </DataTemplate>
@@ -148,8 +164,8 @@
                             <DataTemplate DataType="{x:Type v:DocumentClassificator}">
                                 <Grid Margin="0,5,0,5">
                                     <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="1*"></ColumnDefinition>
-                                        <ColumnDefinition Width="3*"></ColumnDefinition>
+                                        <ColumnDefinition Width="2*"></ColumnDefinition>
+                                        <ColumnDefinition Width="5*"></ColumnDefinition>
                                     </Grid.ColumnDefinitions>
                                     <Label
                                         Grid.Column="0" 
@@ -160,11 +176,56 @@
                                         Grid.Column="1"
                                         HorizontalContentAlignment="Stretch"
                                         VerticalContentAlignment="Center"
-                                        Width="200"
                                         ItemsSource="{Binding ClassificatorEntries}"
                                         DisplayMemberPath="Value"
                                         SelectedValuePath="Value"
-                                        SelectedItem="{Binding Value}"/>
+                                        SelectedItem="{Binding Value}">
+                                    </ComboBox>
+                                </Grid>
+                            </DataTemplate>
+
+                            <DataTemplate DataType="{x:Type v:DocumentClassificatorExp}">
+                                <Grid Margin="0,5,0,5">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="2*"></ColumnDefinition>
+                                        <ColumnDefinition Width="5*"></ColumnDefinition>
+                                    </Grid.ColumnDefinitions>
+                                    <Label
+                                        Grid.Column="0" 
+                                        Style="{StaticResource Normal}"
+                                        HorizontalAlignment="Left" VerticalAlignment="Center"
+                                        Content="{Binding Name}"/>
+                                    <ListView
+                                        Grid.Column="1"
+                                        HorizontalAlignment="Stretch"
+                                        HorizontalContentAlignment="Stretch"
+                                        MaxHeight="100"
+                                        ItemsSource="{Binding ClassificatorEntries}"
+                                        ScrollViewer.VerticalScrollBarVisibility="Hidden">
+                                        <ListView.ItemTemplate>
+                                            <DataTemplate>
+                                                <CheckBox Name="ClassificatorName"
+                                                          Content="{Binding ClassificatorName}"
+                                                          IsChecked="{Binding ClassificatorCheck}"/>
+                                            </DataTemplate>
+                                        </ListView.ItemTemplate>
+                                    </ListView>
+                                    <!--ComboBox
+                                        Grid.Column="1"
+                                        HorizontalContentAlignment="Stretch"
+                                        VerticalContentAlignment="Center"
+                                        ItemsSource="{Binding ClassificatorEntries}"
+                                        SelectedValuePath="Oid"
+                                        SelectedItem="{Binding SelectedItems, Mode=OneWay}">
+                                        <ComboBox.ItemTemplate>
+                                            <DataTemplate>
+                                                <CheckBox Name="ClassificatorName" 
+                                                          Content="{Binding ClassificatorName}"
+                                                          IsChecked="{Binding ClassificatorCheck}">
+                                                </CheckBox>
+                                            </DataTemplate>
+                                        </ComboBox.ItemTemplate>
+                                    </ComboBox-->
                                 </Grid>
                             </DataTemplate>
                         </ItemsControl.Resources>
@@ -198,48 +259,57 @@
                      Margin="10, 10, 150, 30"
                      Style="{StaticResource MainTextBox}"
                      HorizontalAlignment="Stretch"
-                     Text="{Binding DocumentSearch}"></TextBox>
+                     Text="{Binding DocumentSearch, UpdateSourceTrigger=PropertyChanged}"></TextBox>
 
             <StackPanel
-            Grid.Row="6" Grid.Column="1">
+                Grid.Row="6" Grid.Column="1">
                 <Label
                     HorizontalAlignment="Left"
                     Style="{StaticResource Normal}">Результаты поиска</Label>
                 <ListView x:Name="lv_searchResult"
-                      ItemsSource="{Binding DocumentSearchListEntries}"
-                      Height="300"
-                      HorizontalContentAlignment="Stretch">
+                          ItemsSource="{Binding DocumentSearchListEntries}"
+                          HorizontalContentAlignment="Stretch"
+                          Padding="0,0,0,20"
+                          Visibility="{Binding SearchGridVisibility}">
                     <ListView.Resources>
                         <Style x:Key="headerStyle" TargetType="{x:Type GridViewColumnHeader}">
-                            <Setter Property="Visibility" Value="Collapsed"></Setter>
+                            <Setter Property="Visibility" Value="Visible"></Setter>
                         </Style>
                     </ListView.Resources>
                     <ListView.View>
                         <GridView ColumnHeaderContainerStyle="{StaticResource headerStyle}">
-                            <GridViewColumn Width="auto">
-                                <GridViewColumn.CellTemplate>
-                                    <DataTemplate>
-                                        <Label x:Name="lb_documentItemName"
-                                           Style="{DynamicResource Normal}">
-                                            <TextBlock Text="{Binding DocumentName}"></TextBlock>
-                                        </Label>
-                                    </DataTemplate>
-                                </GridViewColumn.CellTemplate>
-                            </GridViewColumn>
-                            <GridViewColumn Width="200">
-                                <GridViewColumn.CellTemplate>
-                                    <DataTemplate>
-                                        <Button x:Name="btn_documentItemDelete"
-                                            Style="{DynamicResource MainButton2}"
-                                            Command="{Binding DataContext.DeleteDocumentCommand, RelativeSource={RelativeSource AncestorType=Window}}"
-                                            CommandParameter="{Binding DocumentUid}">Удалить документ</Button>
-                                    </DataTemplate>
-                                </GridViewColumn.CellTemplate>
-                            </GridViewColumn>
+                            <GridView.Columns>
+                                <GridViewColumn Width="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=ListView}, Converter={StaticResource starWidthConverter}}"
+                                    DisplayMemberBinding="{Binding Path=DocumentName}">
+                                </GridViewColumn>
+                                <GridViewColumn Width="150">
+                                    <GridViewColumn.CellTemplate>
+                                        <DataTemplate>
+                                            <Button x:Name="btn_documentItemDelete"
+                                                    Grid.Column="1"
+                                                    HorizontalAlignment="Right"
+                                                    Style="{DynamicResource MainButton2}"
+                                                    Command="{Binding DataContext.DeleteDocumentCommand, RelativeSource={RelativeSource AncestorType=Window}}"
+                                                    CommandParameter="{Binding DocumentUid}">Удалить документ</Button>
+                                        </DataTemplate>
+                                    </GridViewColumn.CellTemplate>
+                                </GridViewColumn>
+                            </GridView.Columns>
                         </GridView>
                     </ListView.View>
                 </ListView>
+                <TextBox x:Name="tbSearchResultLoading"
+                         Visibility="{Binding SearchLoadingVisibility}"
+                         IsReadOnly="True" Text="{Binding SearchResultString}"
+                         BorderThickness="0">
+                </TextBox>
             </StackPanel>
+
+            <GridSplitter Grid.Row="7" Grid.ColumnSpan="2" Height="1" Background="{StaticResource MainTextBrush}"
+                      HorizontalAlignment="Stretch" VerticalAlignment="Bottom"></GridSplitter>
+            <Label Grid.Row="8" Grid.ColumnSpan="2"
+                   Margin="0,30,0,20"
+                   HorizontalAlignment="Right">Designed Браво Софт</Label>
         </Grid>
     </ScrollViewer>
 </Window>

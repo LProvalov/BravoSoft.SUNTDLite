@@ -1189,7 +1189,7 @@ namespace SUNTDLite.DocsSoapService {
         [System.ServiceModel.OperationContractAttribute(Action="http://kodekssoap.org/AddAttachment", ReplyAction="*")]
         [System.ServiceModel.DataContractFormatAttribute(Style=System.ServiceModel.OperationFormatStyle.Rpc)]
         [return: System.ServiceModel.MessageParameterAttribute(Name="string")]
-        string AddAttachment(int arg0, string arg1, string arg2, string arg3, int arg4, int arg5, int arg6, int arg7, int arg8, int arg9);
+        string AddAttachment(int arg0, string arg1, string arg2, string arg3, int arg4, int arg5, int arg6, int arg7, int arg8);
         
         [System.ServiceModel.OperationContractAttribute(Action="http://kodekssoap.org/CreateEdition", ReplyAction="*")]
         [System.ServiceModel.DataContractFormatAttribute(Style=System.ServiceModel.OperationFormatStyle.Rpc)]
@@ -1357,8 +1357,8 @@ namespace SUNTDLite.DocsSoapService {
             return base.Channel.GetStatusSettings();
         }
         
-        public string AddAttachment(int arg0, string arg1, string arg2, string arg3, int arg4, int arg5, int arg6, int arg7, int arg8, int arg9) {
-            return base.Channel.AddAttachment(arg0, arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9);
+        public string AddAttachment(int arg0, string arg1, string arg2, string arg3, int arg4, int arg5, int arg6, int arg7, int arg8) {
+            return base.Channel.AddAttachment(arg0, arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8);
         }
         
         public string CreateEdition(int arg0, string arg1, string arg2, string arg3, int arg4, int arg5) {

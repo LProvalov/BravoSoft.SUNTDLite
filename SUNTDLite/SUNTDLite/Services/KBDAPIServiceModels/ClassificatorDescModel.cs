@@ -24,7 +24,12 @@ namespace SUNTDLite.Services.KBDAPIServiceModels
             }
             public string Name { get; set; }
             public long Oid { get; set; }
-            public List<ClassificatorDescModelItem> Childrens { get; set; }
+            public List<ClassificatorDescModelItem> Childrens { get; set; } = new List<ClassificatorDescModelItem>();
+        }
+
+        public ClassificatorDescModel(string typeStr)
+        {
+            Type = GetType(typeStr);
         }
 
         public ClassificatorDescModel(ClassificatorDesc classificatorDesc)
@@ -69,6 +74,15 @@ namespace SUNTDLite.Services.KBDAPIServiceModels
                 }
 
                 foundedItem.Childrens.AddRange(values.Select(v => new ClassificatorDescModelItem(v.name, v.oid)));
+            }
+        }
+
+        public void AddChild(int oid, string chldName, int chldOid)
+        {
+            var foundItem = Values.Find(v => v.Oid == oid);
+            if (foundItem != null)
+            {
+                foundItem.Childrens.Add(new ClassificatorDescModelItem(chldName, chldOid));
             }
         }
     }

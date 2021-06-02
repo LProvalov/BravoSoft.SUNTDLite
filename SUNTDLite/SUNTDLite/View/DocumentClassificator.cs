@@ -8,26 +8,17 @@ namespace SUNTDLite.View
 {
     public class DocumentClassificator : DocumentType
     {
-        public enum DocumentClassificatorType
-        {
-            Single,
-            Multiple
-        }
         public class DocumentClassificatorEntry
         {
-            public DocumentClassificatorEntry(string value)
+            public DocumentClassificatorEntry(string name)
             {
-                _value = value;
+                Value = name;
             }
             private string _value;
-            public string Value 
+            public string Value
             {
                 get
                 {
-                    if (Childrens != null && Childrens.Any())
-                    {
-                        return $"\t+{_value} ({Childrens.Count})";
-                    }
                     return _value;
                 }
                 set
@@ -35,11 +26,7 @@ namespace SUNTDLite.View
                     _value = value;
                 }
             }
-            public List<DocumentClassificatorEntry> Childrens { get; } = new List<DocumentClassificatorEntry>();
         }
-
-        public DocumentClassificatorType Type { get; protected set; }
-
         private List<DocumentClassificatorEntry> _classificatorEntries = new List<DocumentClassificatorEntry>();
         public List<DocumentClassificatorEntry> ClassificatorEntries
         {
@@ -56,30 +43,20 @@ namespace SUNTDLite.View
         }
         public DocumentClassificatorEntry Value { get; set; }
 
-        public DocumentClassificator(string name, long attributeNumber, int valueIndex, ClassificatorDescModel classificatorDescModel, 
-            DocumentClassificatorType type = DocumentClassificatorType.Single) : base(name, attributeNumber)
+        public DocumentClassificator(string name, long attributeNumber, int valueIndex, ClassificatorDescModel classificatorDescModel) : base(name, attributeNumber)
         {
             if (classificatorDescModel.Type == ClassificatorDescModel.ClassificatorDescModelType.Linear)
             {
-                foreach (var classItemValue in classificatorDescModel.Values)
+                foreach (var classItemValue in classificatorDescModel.Values.OrderBy(v => v.Name))
                 {
                     _classificatorEntries.Add(new DocumentClassificatorEntry(classItemValue.Name));
                 }
             }
             else if (classificatorDescModel.Type == ClassificatorDescModel.ClassificatorDescModelType.Multiple)
             {
-                foreach(var classItemValue in classificatorDescModel.Values)
-                {
-                    var entry = new DocumentClassificatorEntry(classItemValue.Name);
-                    if (classItemValue.Childrens != null && classItemValue.Childrens.Any())
-                    {
-                        entry.Childrens.AddRange(classItemValue.Childrens.Select(c => new DocumentClassificatorEntry(c.Name)));
-                    }
-                    _classificatorEntries.Add(entry);
-                }
+                throw new ArgumentException("DocumentClassificator got model of Multiple type");
             }
 
-            Type = type;
             try
             {
                 Value = _classificatorEntries[valueIndex];
@@ -90,9 +67,19 @@ namespace SUNTDLite.View
             }
         }
 
-        public override string GetValueString()
+        public override IEnumerable<string> GetValueString()
         {
-            return Value?.Value;
+            if (Value != null)
+            {
+                return new string[] { Value?.Value };
+            }
+            return null;
+        }
+
+        public override void Clean()
+        {
+            Value = null;
+            OnPropertyChanged("Value");
         }
     }
 }

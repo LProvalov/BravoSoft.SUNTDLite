@@ -24,13 +24,13 @@
 </s:complexType>
 <s:complexType name="CardAttribute">
 <s:sequence>
-<s:element minOccurs="1" maxOccurs="1" name="attrnum" type="s:long"/>
-<s:element minOccurs="1" maxOccurs="1" name="type" type="s:string"/>
+<s:element minOccurs="1" maxOccurs="1" name="attrnum" type="s:int"/>
+<s:element minOccurs="1" maxOccurs="1" name="type" type="s:int"/>
 <s:element minOccurs="1" maxOccurs="1" name="title" type="s:string"/>
 </s:sequence>
 </s:complexType>
-<s:complexType name="ArrayOfCardAttribute">
-<s:sequence>
+<s:complexType name="CardAttributes">
+<s:sequence minOccurs="0" maxOccurs="unbounded">
 <s:element minOccurs="0" maxOccurs="unbounded" name="item_CardAttribute" type="tns:CardAttribute"/>
 </s:sequence>
 </s:complexType>
@@ -41,7 +41,7 @@
 </s:sequence>
 </s:complexType>
 <s:complexType name="ArrayOfClassificatorValue">
-<s:sequence>
+<s:sequence minOccurs="0" maxOccurs="unbounded">
 <s:element minOccurs="0" maxOccurs="unbounded" name="item_ClassificatorValue" type="tns:ClassificatorValue"/>
 </s:sequence>
 </s:complexType>
@@ -53,12 +53,12 @@
 </s:complexType>
 <s:complexType name="DocumentDesc">
 <s:sequence>
-<s:element minOccurs="1" maxOccurs="1" name="oid" type="s:long"/>
+<s:element minOccurs="1" maxOccurs="1" name="oid" type="s:int"/>
 <s:element minOccurs="1" maxOccurs="1" name="name" type="s:string"/>
 </s:sequence>
 </s:complexType>
 <s:complexType name="ArrayOfAttachmentItem">
-<s:sequence>
+<s:sequence minOccurs="0" maxOccurs="unbounded">
 <s:element minOccurs="0" maxOccurs="unbounded" name="item_AttachmentItem" type="tns:AttachmentItem"/>
 </s:sequence>
 </s:complexType>
@@ -79,7 +79,7 @@
 </s:sequence>
 </s:complexType>
 <s:complexType name="DocumentLists">
-<s:sequence>
+<s:sequence minOccurs="0" maxOccurs="unbounded">
 <s:element minOccurs="0" maxOccurs="unbounded" name="item_DocumentList" type="tns:DocumentList"/>
 </s:sequence>
 </s:complexType>
@@ -116,24 +116,24 @@
 </s:sequence>
 </s:complexType>
 <s:complexType name="ArrayOfstring">
-<s:sequence>
+<s:sequence minOccurs="0" maxOccurs="unbounded">
 <s:element minOccurs="0" maxOccurs="unbounded" name="string" type="s:string"/>
 </s:sequence>
 </s:complexType>
 <s:complexType name="ArrayOfAttachmentDesc">
-<s:sequence>
+<s:sequence minOccurs="0" maxOccurs="unbounded">
 <s:element minOccurs="0" maxOccurs="unbounded" name="item_AttachmentDesc" type="tns:AttachmentDesc"/>
 </s:sequence>
 </s:complexType>
 <s:complexType name="ArrayOfOrganisationDesc">
-<s:sequence>
+<s:sequence minOccurs="0" maxOccurs="unbounded">
 <s:element minOccurs="0" maxOccurs="unbounded" name="item_OrganisationDesc" type="tns:OrganisationDesc"/>
 </s:sequence>
 </s:complexType>
 </s:schema>
 </wsdl:types>
 <wsdl:message name="CheckRequestStatusSoapIn">
-<wsdl:part name="arg0" type="s:string"/>
+<wsdl:part name="checkReqStatus" type="s:string"/>
 </wsdl:message>
 <wsdl:message name="CheckRequestStatusSoapOut">
 <wsdl:part name="ArrayOfstring" type="tns:ArrayOfstring"/>
@@ -141,33 +141,33 @@
 <wsdl:message name="GetCardAttributesSoapIn">
 </wsdl:message>
 <wsdl:message name="GetCardAttributesSoapOut">
-<wsdl:part name="CardAttributes" type="tns:ArrayOfCardAttribute"/>
+<wsdl:part name="CardAttributes" type="tns:CardAttributes"/>
 </wsdl:message>
 <wsdl:message name="GetClassificatorDescSoapIn">
-<wsdl:part name="arg0" type="s:int"/>
-<wsdl:part name="arg1" type="s:int" />
+<wsdl:part name="clsDescrArg0" type="s:int"/>
+<wsdl:part name="clsDescrArg1" type="s:int"/>
 </wsdl:message>
 <wsdl:message name="GetClassificatorDescSoapOut">
 <wsdl:part name="ClassificatorDesc" type="tns:ClassificatorDesc"/>
 </wsdl:message>
 <wsdl:message name="GetDocumentDescSoapIn">
-<wsdl:part name="arg0" type="s:string"/>
+<wsdl:part name="docDescArg0" type="s:string"/>
 </wsdl:message>
 <wsdl:message name="GetDocumentDescSoapOut">
 <wsdl:part name="DocumentDesc" type="tns:DocumentDesc"/>
 </wsdl:message>
 <wsdl:message name="GetDocumentAttachmentsDescSoapIn">
-<wsdl:part name="arg0" type="s:int"/>
-<wsdl:part name="arg1" type="s:string"/>
-<wsdl:part name="arg2" type="s:string"/>
+<wsdl:part name="docAttDescArg0" type="s:int"/>
+<wsdl:part name="docAttDescArg1" type="s:string"/>
+<wsdl:part name="docAttDescArg2" type="s:string"/>
 </wsdl:message>
 <wsdl:message name="GetDocumentAttachmentsDescSoapOut">
 <wsdl:part name="ArrayOfAttachmentDesc" type="tns:ArrayOfAttachmentDesc"/>
 </wsdl:message>
 <wsdl:message name="GetDocumentItemsSoapIn">
-<wsdl:part name="arg0" type="s:int"/>
-<wsdl:part name="arg1" type="s:string"/>
-<wsdl:part name="arg2" type="s:string"/>
+<wsdl:part name="docItemsSarg0" type="s:int"/>
+<wsdl:part name="docItemsSarg1" type="s:string"/>
+<wsdl:part name="docItemsSarg2" type="s:string"/>
 </wsdl:message>
 <wsdl:message name="GetDocumentItemsSoapOut">
 <wsdl:part name="DocumentItems" type="tns:DocumentItems"/>
@@ -178,13 +178,13 @@
 <wsdl:part name="DocumentLists" type="tns:DocumentLists"/>
 </wsdl:message>
 <wsdl:message name="GetEditionDescSoapIn">
-<wsdl:part name="arg0" type="s:string"/>
+<wsdl:part name="ediDescArg0" type="s:string"/>
 </wsdl:message>
 <wsdl:message name="GetEditionDescSoapOut">
 <wsdl:part name="EditionDesc" type="tns:EditionDesc"/>
 </wsdl:message>
 <wsdl:message name="GetLinkedDocsAttributesSoapIn">
-<wsdl:part name="arg0" type="s:string"/>
+<wsdl:part name="linkDockArg0" type="s:string"/>
 </wsdl:message>
 <wsdl:message name="GetLinkedDocsAttributesSoapOut">
 <wsdl:part name="LinkedDocsAttributes" type="tns:LinkedDocsAttributes"/>
@@ -197,7 +197,7 @@
 <wsdl:message name="GetServiceAttributesSoapIn">
 </wsdl:message>
 <wsdl:message name="GetServiceAttributesSoapOut">
-<wsdl:part name="ArrayOfCardAttribute" type="tns:ArrayOfCardAttribute"/>
+<wsdl:part name="CardAttributes" type="tns:CardAttributes"/>
 </wsdl:message>
 <wsdl:message name="GetStatusSettingsSoapIn">
 </wsdl:message>
@@ -205,156 +205,156 @@
 <wsdl:part name="StatusSettings" type="tns:StatusSettings"/>
 </wsdl:message>
 <wsdl:message name="AddAttachmentSoapIn">
-<wsdl:part name="arg0" type="s:int"/>
-<wsdl:part name="arg1" type="s:string"/>
-<wsdl:part name="arg2" type="s:string"/>
-<wsdl:part name="arg3" type="s:string"/>
-<wsdl:part name="arg4" type="s:int"/>
-<wsdl:part name="arg5" type="s:int"/>
-<wsdl:part name="arg6" type="s:int"/>
-<wsdl:part name="arg7" type="s:int"/>
-<wsdl:part name="arg8" type="s:int"/>
-<!--wsdl:part name="arg9" type="s:int"/-->
+<wsdl:part name="attSoapArg0" type="s:int"/>
+<wsdl:part name="attSoapArg1" type="s:string"/>
+<wsdl:part name="attSoapArg2" type="s:string"/>
+<wsdl:part name="attSoapArg3" type="s:string"/>
+<wsdl:part name="attSoapArg4" type="s:int"/>
+<wsdl:part name="attSoapArg5" type="s:int"/>
+<wsdl:part name="attSoapArg6" type="s:int"/>
+<wsdl:part name="attSoapArg7" type="s:int"/>
+<wsdl:part name="attSoapArg8" type="s:int"/>
+<wsdl:part name="attSoapArg9" type="s:int"/>
 </wsdl:message>
 <wsdl:message name="AddAttachmentSoapOut">
 <wsdl:part name="string" type="s:string"/>
 </wsdl:message>
 <wsdl:message name="CreateEditionSoapIn">
-<wsdl:part name="arg0" type="s:int"/>
-<wsdl:part name="arg1" type="s:string"/>
-<wsdl:part name="arg2" type="s:string"/>
-<wsdl:part name="arg3" type="s:string"/>
-<wsdl:part name="arg4" type="s:int"/>
-<wsdl:part name="arg5" type="s:int"/>
+<wsdl:part name="creEditArg0" type="s:int"/>
+<wsdl:part name="creEditArg1" type="s:string"/>
+<wsdl:part name="creEditArg2" type="s:string"/>
+<wsdl:part name="creEditArg3" type="s:string"/>
+<wsdl:part name="creEditArg4" type="s:int"/>
+<wsdl:part name="creEditArg5" type="s:int"/>
 </wsdl:message>
 <wsdl:message name="CreateEditionSoapOut">
 <wsdl:part name="string" type="s:string"/>
 </wsdl:message>
 <wsdl:message name="CreateCardSoapIn">
-<wsdl:part name="arg0" type="s:string"/>
-<wsdl:part name="arg1" type="s:string"/>
+<wsdl:part name="CreCardSoapArg0" type="s:string"/>
+<wsdl:part name="CreCardSoapArg1" type="s:string"/>
 </wsdl:message>
 <wsdl:message name="CreateCardSoapOut">
 <wsdl:part name="string" type="s:string"/>
 </wsdl:message>
 <wsdl:message name="DeleteAttachmentsSoapIn">
-<wsdl:part name="arg0" type="s:int"/>
-<wsdl:part name="arg1" type="s:string"/>
+<wsdl:part name="delAttSoapArg0" type="s:int"/>
+<wsdl:part name="delAttSoapArg1" type="s:string"/>
 </wsdl:message>
 <wsdl:message name="DeleteAttachmentsSoapOut">
 <wsdl:part name="string" type="s:string"/>
 </wsdl:message>
 <wsdl:message name="EditAttachmentsSoapIn">
-<wsdl:part name="arg0" type="s:string"/>
+<wsdl:part name="editAttSoapArg0" type="s:string"/>
 </wsdl:message>
 <wsdl:message name="EditAttachmentsSoapOut">
 <wsdl:part name="string" type="s:string"/>
 </wsdl:message>
 <wsdl:message name="EditCardSoapIn">
-<wsdl:part name="arg0" type="s:int"/>
-<wsdl:part name="arg1" type="s:string"/>
-<wsdl:part name="arg2" type="s:string"/>
+<wsdl:part name="editCardSoapArg0" type="s:int"/>
+<wsdl:part name="editCardSoapArg1" type="s:string"/>
+<wsdl:part name="editCardSoapArg2" type="s:string"/>
 </wsdl:message>
 <wsdl:message name="EditCardSoapOut">
 <wsdl:part name="string" type="s:string"/>
 </wsdl:message>
 <wsdl:message name="RemoveDocumentSoapIn">
-<wsdl:part name="arg0" type="s:long"/>
-<wsdl:part name="arg1" type="s:string"/>
+<wsdl:part name="remDocSoapArg0" type="s:int"/>
+<wsdl:part name="remDocSoapArg1" type="s:string"/>
 </wsdl:message>
 <wsdl:message name="RemoveDocumentSoapOut">
 <wsdl:part name="string" type="s:string"/>
 </wsdl:message>
 <wsdl:message name="SetDocxSoapIn">
-<wsdl:part name="arg0" type="s:int"/>
-<wsdl:part name="arg1" type="s:string"/>
-<wsdl:part name="arg2" type="s:string"/>
+<wsdl:part name="setDocxSoapArg0" type="s:int"/>
+<wsdl:part name="setDocxSoapArg1" type="s:string"/>
+<wsdl:part name="setDocxSoapArg2" type="s:string"/>
 </wsdl:message>
 <wsdl:message name="SetDocxSoapOut">
 <wsdl:part name="string" type="s:string"/>
 </wsdl:message>
 <wsdl:message name="SetKDocSoapIn">
-<wsdl:part name="arg0" type="s:int"/>
-<wsdl:part name="arg1" type="s:string"/>
-<wsdl:part name="arg2" type="s:string"/>
+<wsdl:part name="setKDocArg0" type="s:int"/>
+<wsdl:part name="setKDocArg1" type="s:string"/>
+<wsdl:part name="setKDocArg2" type="s:string"/>
 </wsdl:message>
 <wsdl:message name="SetKDocSoapOut">
 <wsdl:part name="string" type="s:string"/>
 </wsdl:message>
 <wsdl:message name="SetKXmlSoapIn">
-<wsdl:part name="arg0" type="s:int"/>
-<wsdl:part name="arg1" type="s:string"/>
-<wsdl:part name="arg2" type="s:string"/>
+<wsdl:part name="setKDocSoapArg0" type="s:int"/>
+<wsdl:part name="setKDocSoapArg1" type="s:string"/>
+<wsdl:part name="setKDocSoapArg2" type="s:string"/>
 </wsdl:message>
 <wsdl:message name="SetKXmlSoapOut">
 <wsdl:part name="string" type="s:string"/>
 </wsdl:message>
 <wsdl:message name="SetTextSoapIn">
-<wsdl:part name="arg0" type="s:int"/>
-<wsdl:part name="arg1" type="s:string"/>
-<wsdl:part name="arg2" type="s:string"/>
-<wsdl:part name="arg3" type="s:string"/>
+<wsdl:part name="setTextSoapArg0" type="s:int"/>
+<wsdl:part name="setTextSoapArg1" type="s:string"/>
+<wsdl:part name="setTextSoapArg2" type="s:string"/>
+<wsdl:part name="setTextSoapArg3" type="s:string"/>
 </wsdl:message>
 <wsdl:message name="SetTextSoapOut">
 <wsdl:part name="string" type="s:string"/>
 </wsdl:message>
 <wsdl:message name="SetDefaultPdfViewerSoapIn">
-<wsdl:part name="arg0" type="s:int"/>
-<wsdl:part name="arg1" type="s:string"/>
-<wsdl:part name="arg2" type="s:string"/>
+<wsdl:part name="setDefPdfArg0" type="s:int"/>
+<wsdl:part name="setDefPdfArg1" type="s:string"/>
+<wsdl:part name="setDefPdfArg2" type="s:string"/>
 </wsdl:message>
 <wsdl:message name="SetDefaultPdfViewerSoapOut">
 <wsdl:part name="string" type="s:string"/>
 </wsdl:message>
 <wsdl:message name="SetDraftModeOffSoapIn">
-<wsdl:part name="arg0" type="s:int"/>
-<wsdl:part name="arg1" type="s:string"/>
+<wsdl:part name="setDraftModeArg0" type="s:int"/>
+<wsdl:part name="setDraftModeArg1" type="s:string"/>
 </wsdl:message>
 <wsdl:message name="SetDraftModeOffSoapOut">
 <wsdl:part name="string" type="s:string"/>
 </wsdl:message>
 <wsdl:message name="SetDraftModeOnSoapIn">
-<wsdl:part name="arg0" type="s:int"/>
-<wsdl:part name="arg1" type="s:string"/>
+<wsdl:part name="setDraftModeOnArg0" type="s:int"/>
+<wsdl:part name="setDraftModeOnArg1" type="s:string"/>
 </wsdl:message>
 <wsdl:message name="SetDraftModeOnSoapOut">
 <wsdl:part name="string" type="s:string"/>
 </wsdl:message>
 <wsdl:message name="SetKodeksAttachModeOffSoapIn">
-<wsdl:part name="arg0" type="s:int"/>
-<wsdl:part name="arg1" type="s:string"/>
+<wsdl:part name="setKodeksAttArg0" type="s:int"/>
+<wsdl:part name="setKodeksAttArg1" type="s:string"/>
 </wsdl:message>
 <wsdl:message name="SetKodeksAttachModeOffSoapOut">
 <wsdl:part name="string" type="s:string"/>
 </wsdl:message>
 <wsdl:message name="SetKodeksAttachModeOnSoapIn">
-<wsdl:part name="arg0" type="s:int"/>
-<wsdl:part name="arg1" type="s:string"/>
+<wsdl:part name="setKodeksAttModeOnSoapArg0" type="s:int"/>
+<wsdl:part name="setKodeksAttModeOnSoapArg1" type="s:string"/>
 </wsdl:message>
 <wsdl:message name="SetKodeksAttachModeOnSoapOut">
 <wsdl:part name="string" type="s:string"/>
 </wsdl:message>
 <wsdl:message name="SetKodeksStatusSoapIn">
-<wsdl:part name="arg0" type="s:int"/>
-<wsdl:part name="arg1" type="s:string"/>
-<wsdl:part name="arg2" type="s:string"/>
+<wsdl:part name="setKodeksStatusArg0" type="s:int"/>
+<wsdl:part name="setKodeksStatusArg1" type="s:string"/>
+<wsdl:part name="setKodeksStatusArg2" type="s:string"/>
 </wsdl:message>
 <wsdl:message name="SetKodeksStatusSoapOut">
 <wsdl:part name="string" type="s:string"/>
 </wsdl:message>
 <wsdl:message name="SetOrganisationSoapIn">
-<wsdl:part name="arg0" type="s:int"/>
-<wsdl:part name="arg1" type="s:string"/>
-<wsdl:part name="arg2" type="s:int"/>
+<wsdl:part name="setOrganSoapArg0" type="s:int"/>
+<wsdl:part name="setOrganSoapArg1" type="s:string"/>
+<wsdl:part name="setOrganSoapArg2" type="s:int"/>
 </wsdl:message>
 <wsdl:message name="SetOrganisationSoapOut">
 <wsdl:part name="string" type="s:string"/>
 </wsdl:message>
 <wsdl:message name="SetServiceAttributesSoapIn">
-<wsdl:part name="arg0" type="s:int"/>
-<wsdl:part name="arg1" type="s:string"/>
-<wsdl:part name="arg2" type="s:string"/>
-<wsdl:part name="arg3" type="s:string"/>
+<wsdl:part name="setServiceAttrSoapArg0" type="s:int"/>
+<wsdl:part name="setServiceAttrSoapArg1" type="s:string"/>
+<wsdl:part name="setServiceAttrSoapArg2" type="s:string"/>
+<wsdl:part name="setServiceAttrSoapArg3" type="s:string"/>
 </wsdl:message>
 <wsdl:message name="SetServiceAttributesSoapOut">
 <wsdl:part name="string" type="s:string"/>
@@ -490,280 +490,280 @@
 <wsdl:operation name="CheckRequestStatus">
 <soap:operation soapAction="http://kodekssoap.org/CheckRequestStatus"/>
 <wsdl:input>
-<soap:body namespace="http://kodekssoap.org/" use="literal"/>
+<soap:body namespace="http://kodekssoap.org/" use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
 </wsdl:input>
 <wsdl:output>
-<soap:body namespace="http://kodekssoap.org/" use="literal"/>
+<soap:body namespace="http://kodekssoap.org/" use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
 </wsdl:output>
 </wsdl:operation>
 <wsdl:operation name="GetCardAttributes">
 <soap:operation soapAction="http://kodekssoap.org/GetCardAttributes"/>
 <wsdl:input>
-<soap:body namespace="http://kodekssoap.org/" use="literal"/>
+<soap:body namespace="http://kodekssoap.org/" use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
 </wsdl:input>
 <wsdl:output>
-<soap:body namespace="http://kodekssoap.org/" use="literal"/>
+<soap:body namespace="http://kodekssoap.org/" use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
 </wsdl:output>
 </wsdl:operation>
 <wsdl:operation name="GetClassificatorDesc">
 <soap:operation soapAction="http://kodekssoap.org/GetClassificatorDesc"/>
 <wsdl:input>
-<soap:body namespace="http://kodekssoap.org/" use="literal"/>
+<soap:body namespace="http://kodekssoap.org/" use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
 </wsdl:input>
 <wsdl:output>
-<soap:body namespace="http://kodekssoap.org/" use="literal"/>
+<soap:body namespace="http://kodekssoap.org/" use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
 </wsdl:output>
 </wsdl:operation>
 <wsdl:operation name="GetDocumentDesc">
 <soap:operation soapAction="http://kodekssoap.org/GetDocumentDesc"/>
 <wsdl:input>
-<soap:body namespace="http://kodekssoap.org/" use="literal"/>
+<soap:body namespace="http://kodekssoap.org/" use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
 </wsdl:input>
 <wsdl:output>
-<soap:body namespace="http://kodekssoap.org/" use="literal"/>
+<soap:body namespace="http://kodekssoap.org/" use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
 </wsdl:output>
 </wsdl:operation>
 <wsdl:operation name="GetDocumentAttachmentsDesc">
 <soap:operation soapAction="http://kodekssoap.org/GetDocumentAttachmentsDesc"/>
 <wsdl:input>
-<soap:body namespace="http://kodekssoap.org/" use="literal"/>
+<soap:body namespace="http://kodekssoap.org/" use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
 </wsdl:input>
 <wsdl:output>
-<soap:body namespace="http://kodekssoap.org/" use="literal"/>
+<soap:body namespace="http://kodekssoap.org/" use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
 </wsdl:output>
 </wsdl:operation>
 <wsdl:operation name="GetDocumentItems">
 <soap:operation soapAction="http://kodekssoap.org/GetDocumentItems"/>
 <wsdl:input>
-<soap:body namespace="http://kodekssoap.org/" use="literal"/>
+<soap:body namespace="http://kodekssoap.org/" use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
 </wsdl:input>
 <wsdl:output>
-<soap:body namespace="http://kodekssoap.org/" use="literal"/>
+<soap:body namespace="http://kodekssoap.org/" use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
 </wsdl:output>
 </wsdl:operation>
 <wsdl:operation name="GetDocumentLists">
 <soap:operation soapAction="http://kodekssoap.org/GetDocumentLists"/>
 <wsdl:input>
-<soap:body namespace="http://kodekssoap.org/" use="literal"/>
+<soap:body namespace="http://kodekssoap.org/" use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
 </wsdl:input>
 <wsdl:output>
-<soap:body namespace="http://kodekssoap.org/" use="literal"/>
+<soap:body namespace="http://kodekssoap.org/" use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
 </wsdl:output>
 </wsdl:operation>
 <wsdl:operation name="GetEditionDesc">
 <soap:operation soapAction="http://kodekssoap.org/GetEditionDesc"/>
 <wsdl:input>
-<soap:body namespace="http://kodekssoap.org/" use="literal"/>
+<soap:body namespace="http://kodekssoap.org/" use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
 </wsdl:input>
 <wsdl:output>
-<soap:body namespace="http://kodekssoap.org/" use="literal"/>
+<soap:body namespace="http://kodekssoap.org/" use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
 </wsdl:output>
 </wsdl:operation>
 <wsdl:operation name="GetLinkedDocsAttributes">
 <soap:operation soapAction="http://kodekssoap.org/GetLinkedDocsAttributes"/>
 <wsdl:input>
-<soap:body namespace="http://kodekssoap.org/" use="literal"/>
+<soap:body namespace="http://kodekssoap.org/" use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
 </wsdl:input>
 <wsdl:output>
-<soap:body namespace="http://kodekssoap.org/" use="literal"/>
+<soap:body namespace="http://kodekssoap.org/" use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
 </wsdl:output>
 </wsdl:operation>
 <wsdl:operation name="GetOrgStructure">
 <soap:operation soapAction="http://kodekssoap.org/GetOrgStructure"/>
 <wsdl:input>
-<soap:body namespace="http://kodekssoap.org/" use="literal"/>
+<soap:body namespace="http://kodekssoap.org/" use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
 </wsdl:input>
 <wsdl:output>
-<soap:body namespace="http://kodekssoap.org/" use="literal"/>
+<soap:body namespace="http://kodekssoap.org/" use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
 </wsdl:output>
 </wsdl:operation>
 <wsdl:operation name="GetServiceAttributes">
 <soap:operation soapAction="http://kodekssoap.org/GetServiceAttributes"/>
 <wsdl:input>
-<soap:body namespace="http://kodekssoap.org/" use="literal"/>
+<soap:body namespace="http://kodekssoap.org/" use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
 </wsdl:input>
 <wsdl:output>
-<soap:body namespace="http://kodekssoap.org/" use="literal"/>
+<soap:body namespace="http://kodekssoap.org/" use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
 </wsdl:output>
 </wsdl:operation>
 <wsdl:operation name="GetStatusSettings">
 <soap:operation soapAction="http://kodekssoap.org/GetStatusSettings"/>
 <wsdl:input>
-<soap:body namespace="http://kodekssoap.org/" use="literal"/>
+<soap:body namespace="http://kodekssoap.org/" use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
 </wsdl:input>
 <wsdl:output>
-<soap:body namespace="http://kodekssoap.org/" use="literal"/>
+<soap:body namespace="http://kodekssoap.org/" use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
 </wsdl:output>
 </wsdl:operation>
 <wsdl:operation name="AddAttachment">
 <soap:operation soapAction="http://kodekssoap.org/AddAttachment"/>
 <wsdl:input>
-<soap:body namespace="http://kodekssoap.org/" use="literal"/>
+<soap:body namespace="http://kodekssoap.org/" use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
 </wsdl:input>
 <wsdl:output>
-<soap:body namespace="http://kodekssoap.org/" use="literal"/>
+<soap:body namespace="http://kodekssoap.org/" use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
 </wsdl:output>
 </wsdl:operation>
 <wsdl:operation name="CreateEdition">
 <soap:operation soapAction="http://kodekssoap.org/CreateEdition"/>
 <wsdl:input>
-<soap:body namespace="http://kodekssoap.org/" use="literal"/>
+<soap:body namespace="http://kodekssoap.org/" use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
 </wsdl:input>
 <wsdl:output>
-<soap:body namespace="http://kodekssoap.org/" use="literal"/>
+<soap:body namespace="http://kodekssoap.org/" use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
 </wsdl:output>
 </wsdl:operation>
 <wsdl:operation name="CreateCard">
 <soap:operation soapAction="http://kodekssoap.org/CreateCard"/>
 <wsdl:input>
-<soap:body namespace="http://kodekssoap.org/" use="literal"/>
+<soap:body namespace="http://kodekssoap.org/" use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
 </wsdl:input>
 <wsdl:output>
-<soap:body namespace="http://kodekssoap.org/" use="literal"/>
+<soap:body namespace="http://kodekssoap.org/" use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
 </wsdl:output>
 </wsdl:operation>
 <wsdl:operation name="DeleteAttachments">
 <soap:operation soapAction="http://kodekssoap.org/DeleteAttachments"/>
 <wsdl:input>
-<soap:body namespace="http://kodekssoap.org/" use="literal"/>
+<soap:body namespace="http://kodekssoap.org/" use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
 </wsdl:input>
 <wsdl:output>
-<soap:body namespace="http://kodekssoap.org/" use="literal"/>
+<soap:body namespace="http://kodekssoap.org/" use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
 </wsdl:output>
 </wsdl:operation>
 <wsdl:operation name="EditAttachments">
 <soap:operation soapAction="http://kodekssoap.org/EditAttachments"/>
 <wsdl:input>
-<soap:body namespace="http://kodekssoap.org/" use="literal"/>
+<soap:body namespace="http://kodekssoap.org/" use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
 </wsdl:input>
 <wsdl:output>
-<soap:body namespace="http://kodekssoap.org/" use="literal"/>
+<soap:body namespace="http://kodekssoap.org/" use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
 </wsdl:output>
 </wsdl:operation>
 <wsdl:operation name="EditCard">
 <soap:operation soapAction="http://kodekssoap.org/EditCard"/>
 <wsdl:input>
-<soap:body namespace="http://kodekssoap.org/" use="literal"/>
+<soap:body namespace="http://kodekssoap.org/" use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
 </wsdl:input>
 <wsdl:output>
-<soap:body namespace="http://kodekssoap.org/" use="literal"/>
+<soap:body namespace="http://kodekssoap.org/" use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
 </wsdl:output>
 </wsdl:operation>
 <wsdl:operation name="RemoveDocument">
 <soap:operation soapAction="http://kodekssoap.org/RemoveDocument"/>
 <wsdl:input>
-<soap:body namespace="http://kodekssoap.org/" use="literal"/>
+<soap:body namespace="http://kodekssoap.org/" use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
 </wsdl:input>
 <wsdl:output>
-<soap:body namespace="http://kodekssoap.org/" use="literal"/>
+<soap:body namespace="http://kodekssoap.org/" use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
 </wsdl:output>
 </wsdl:operation>
 <wsdl:operation name="SetDocx">
 <soap:operation soapAction="http://kodekssoap.org/SetDocx"/>
 <wsdl:input>
-<soap:body namespace="http://kodekssoap.org/" use="literal"/>
+<soap:body namespace="http://kodekssoap.org/" use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
 </wsdl:input>
 <wsdl:output>
-<soap:body namespace="http://kodekssoap.org/" use="literal"/>
+<soap:body namespace="http://kodekssoap.org/" use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
 </wsdl:output>
 </wsdl:operation>
 <wsdl:operation name="SetKDoc">
 <soap:operation soapAction="http://kodekssoap.org/SetKDoc"/>
 <wsdl:input>
-<soap:body namespace="http://kodekssoap.org/" use="literal"/>
+<soap:body namespace="http://kodekssoap.org/" use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
 </wsdl:input>
 <wsdl:output>
-<soap:body namespace="http://kodekssoap.org/" use="literal"/>
+<soap:body namespace="http://kodekssoap.org/" use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
 </wsdl:output>
 </wsdl:operation>
 <wsdl:operation name="SetKXml">
 <soap:operation soapAction="http://kodekssoap.org/SetKXml"/>
 <wsdl:input>
-<soap:body namespace="http://kodekssoap.org/" use="literal"/>
+<soap:body namespace="http://kodekssoap.org/" use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
 </wsdl:input>
 <wsdl:output>
-<soap:body namespace="http://kodekssoap.org/" use="literal"/>
+<soap:body namespace="http://kodekssoap.org/" use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
 </wsdl:output>
 </wsdl:operation>
 <wsdl:operation name="SetText">
 <soap:operation soapAction="http://kodekssoap.org/SetText"/>
 <wsdl:input>
-<soap:body namespace="http://kodekssoap.org/" use="literal"/>
+<soap:body namespace="http://kodekssoap.org/" use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
 </wsdl:input>
 <wsdl:output>
-<soap:body namespace="http://kodekssoap.org/" use="literal"/>
+<soap:body namespace="http://kodekssoap.org/" use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
 </wsdl:output>
 </wsdl:operation>
 <wsdl:operation name="SetDefaultPdfViewer">
 <soap:operation soapAction="http://kodekssoap.org/SetDefaultPdfViewer"/>
 <wsdl:input>
-<soap:body namespace="http://kodekssoap.org/" use="literal"/>
+<soap:body namespace="http://kodekssoap.org/" use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
 </wsdl:input>
 <wsdl:output>
-<soap:body namespace="http://kodekssoap.org/" use="literal"/>
+<soap:body namespace="http://kodekssoap.org/" use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
 </wsdl:output>
 </wsdl:operation>
 <wsdl:operation name="SetDraftModeOff">
 <soap:operation soapAction="http://kodekssoap.org/SetDraftModeOff"/>
 <wsdl:input>
-<soap:body namespace="http://kodekssoap.org/" use="literal"/>
+<soap:body namespace="http://kodekssoap.org/" use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
 </wsdl:input>
 <wsdl:output>
-<soap:body namespace="http://kodekssoap.org/" use="literal"/>
+<soap:body namespace="http://kodekssoap.org/" use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
 </wsdl:output>
 </wsdl:operation>
 <wsdl:operation name="SetDraftModeOn">
 <soap:operation soapAction="http://kodekssoap.org/SetDraftModeOn"/>
 <wsdl:input>
-<soap:body namespace="http://kodekssoap.org/" use="literal"/>
+<soap:body namespace="http://kodekssoap.org/" use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
 </wsdl:input>
 <wsdl:output>
-<soap:body namespace="http://kodekssoap.org/" use="literal"/>
+<soap:body namespace="http://kodekssoap.org/" use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
 </wsdl:output>
 </wsdl:operation>
 <wsdl:operation name="SetKodeksAttachModeOff">
 <soap:operation soapAction="http://kodekssoap.org/SetKodeksAttachModeOff"/>
 <wsdl:input>
-<soap:body namespace="http://kodekssoap.org/" use="literal"/>
+<soap:body namespace="http://kodekssoap.org/" use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
 </wsdl:input>
 <wsdl:output>
-<soap:body namespace="http://kodekssoap.org/" use="literal"/>
+<soap:body namespace="http://kodekssoap.org/" use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
 </wsdl:output>
 </wsdl:operation>
 <wsdl:operation name="SetKodeksAttachModeOn">
 <soap:operation soapAction="http://kodekssoap.org/SetKodeksAttachModeOn"/>
 <wsdl:input>
-<soap:body namespace="http://kodekssoap.org/" use="literal"/>
+<soap:body namespace="http://kodekssoap.org/" use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
 </wsdl:input>
 <wsdl:output>
-<soap:body namespace="http://kodekssoap.org/" use="literal"/>
+<soap:body namespace="http://kodekssoap.org/" use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
 </wsdl:output>
 </wsdl:operation>
 <wsdl:operation name="SetKodeksStatus">
 <soap:operation soapAction="http://kodekssoap.org/SetKodeksStatus"/>
 <wsdl:input>
-<soap:body namespace="http://kodekssoap.org/" use="literal"/>
+<soap:body namespace="http://kodekssoap.org/" use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
 </wsdl:input>
 <wsdl:output>
-<soap:body namespace="http://kodekssoap.org/" use="literal"/>
+<soap:body namespace="http://kodekssoap.org/" use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
 </wsdl:output>
 </wsdl:operation>
 <wsdl:operation name="SetOrganisation">
 <soap:operation soapAction="http://kodekssoap.org/SetOrganisation"/>
 <wsdl:input>
-<soap:body namespace="http://kodekssoap.org/" use="literal"/>
+<soap:body namespace="http://kodekssoap.org/" use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
 </wsdl:input>
 <wsdl:output>
-<soap:body namespace="http://kodekssoap.org/" use="literal"/>
+<soap:body namespace="http://kodekssoap.org/" use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
 </wsdl:output>
 </wsdl:operation>
 <wsdl:operation name="SetServiceAttributes">
 <soap:operation soapAction="http://kodekssoap.org/SetServiceAttributes"/>
 <wsdl:input>
-<soap:body namespace="http://kodekssoap.org/" use="literal"/>
+<soap:body namespace="http://kodekssoap.org/" use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
 </wsdl:input>
 <wsdl:output>
-<soap:body namespace="http://kodekssoap.org/" use="literal"/>
+<soap:body namespace="http://kodekssoap.org/" use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
 </wsdl:output>
 </wsdl:operation>
 </wsdl:binding>

@@ -113,7 +113,7 @@ namespace SUNTDLite.Services
             {
                 if (!_isUseDefaultApps)
                 {
-                    switch (file.Extension)
+                    switch (file.Extension.ToLower())
                     {
                         case ".doc":
                         case ".docx":

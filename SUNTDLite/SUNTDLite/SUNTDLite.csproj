@@ -33,6 +33,9 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
+  <PropertyGroup>
+    <ApplicationIcon>app_icon.ico</ApplicationIcon>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="NLog, Version=4.0.0.0, Culture=neutral, PublicKeyToken=5120e14c03d0593c, processorArchitecture=MSIL">
       <HintPath>..\packages\NLog.4.7.9\lib\net40-client\NLog.dll</HintPath>
@@ -65,8 +68,6 @@
     <Compile Include="ApplicationCommands\ApplicationCommands.cs" />
     <Compile Include="ApplicationCommands\Command.cs" />
     <Compile Include="ApplicationConfiguration\Configuration.cs" />
-    <Compile Include="ApplicationConfiguration\DocumentAtributes.cs" />
-    <Compile Include="ApplicationConfiguration\DocumentAttribute.cs" />
     <Compile Include="ApplicationConfiguration\MainAppConfigurationModel.cs" />
     <Compile Include="ApplicationLogger.cs" />
     <Compile Include="Connected Services\SearchDocsService\Reference.cs">
@@ -79,11 +80,13 @@
     <Compile Include="Services\FilesWorkingService.cs" />
     <Compile Include="Services\KBDAPIServiceModels\CardAttributeModel.cs" />
     <Compile Include="Services\KBDAPIServiceModels\ClassificatorDescModel.cs" />
+    <Compile Include="StarWidthConverter.cs" />
     <Compile Include="Toolbox.cs" />
     <Compile Include="Utilities.cs" />
     <Compile Include="ViewModel\BaseVM.cs" />
     <Compile Include="ViewModel\MainWindowVM.cs" />
     <Compile Include="View\DocumentClassificator.cs" />
+    <Compile Include="View\DocumentClassificatorExp.cs" />
     <Compile Include="View\DocumentDate.cs" />
     <Compile Include="View\DocumentString.cs" />
     <Compile Include="View\DocumentType.cs" />
@@ -280,6 +283,9 @@
     <None Include="NLog.config">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="app_icon.ico" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

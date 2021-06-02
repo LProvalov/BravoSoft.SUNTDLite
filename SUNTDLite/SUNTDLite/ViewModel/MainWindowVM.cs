@@ -11,6 +11,8 @@ using System.Windows.Input;
 using SUNTDLite.ApplicationConfiguration;
 using SUNTDLite.View;
 using SUNTDLite.Services;
+using System.Collections.ObjectModel;
+using System.Threading.Tasks;
 
 namespace SUNTDLite.ViewModel
 {
@@ -23,7 +25,7 @@ namespace SUNTDLite.ViewModel
             set
             {
                 LOG_TRACE($"DocumentArguments changed");
-                if(value == null)
+                if (value == null)
                 {
                     LOG_ERROR("value is null");
                     throw new ArgumentException("document arguments can't be null");
@@ -31,7 +33,7 @@ namespace SUNTDLite.ViewModel
 
                 StringBuilder sb = new StringBuilder();
                 sb.Append("DocArgument values:");
-                foreach(var item in value)
+                foreach (var item in value)
                 {
                     sb.Append(item.Name).Append("/").Append(item.DocumentAttributeNumber).Append("\t");
                 }
@@ -67,7 +69,14 @@ namespace SUNTDLite.ViewModel
                 if (_documentFilePath != value)
                 {
                     _documentFilePath = value;
-                    _documentFileInfo = new FileInfo(_documentFilePath);
+                    if (string.IsNullOrEmpty(_documentFilePath))
+                    {
+                        _documentFileInfo = null;
+                    }
+                    else
+                    {
+                        _documentFileInfo = new FileInfo(_documentFilePath);
+                    }
                     OnPropertyChanged("DocumentFilePath");
                     CommandManager.InvalidateRequerySuggested();
                 }
@@ -90,31 +99,125 @@ namespace SUNTDLite.ViewModel
             }
         }
 
+        private Visibility _attributesLoadingVisibility = Visibility.Visible;
+        public Visibility AttributesLoadingVisibility { 
+            get => _attributesLoadingVisibility;
+            set 
+            {
+                if (value != _attributesLoadingVisibility)
+                {
+                    _attributesLoadingVisibility = value;
+                    OnPropertyChanged("AttributesLoadingVisibility");
+                }
+            } 
+        }
+        
+        private Visibility _attributeGridVisibility = Visibility.Collapsed;
+        public Visibility AttributeGridVisibility
+        {
+            get => _attributeGridVisibility;
+            set
+            {
+                if (value != _attributeGridVisibility)
+                {
+                    _attributeGridVisibility = value;
+                    OnPropertyChanged("AttributeGridVisibility");
+                }
+            }
+        }
+
+        private Visibility _searchLoadingVisibility = Visibility.Collapsed;
+        public Visibility SearchLoadingVisibility
+        {
+            get => _searchLoadingVisibility;
+            set
+            {
+                if (value != _searchLoadingVisibility)
+                {
+                    _searchLoadingVisibility = value;
+                    OnPropertyChanged("SearchLoadingVisibility");
+                }
+            }
+        }
+
+        private string _searchResultString = string.Empty;
+        public string SearchResultString
+        {
+            get => _searchResultString;
+            set
+            {
+                _searchResultString = value;
+                OnPropertyChanged("SearchResultString");
+            }
+        }
+        
+        private Visibility _searchGridVisibility = Visibility.Visible;
+        public Visibility SearchGridVisibility
+        {
+            get => _searchGridVisibility;
+            set
+            {
+                if (value != _searchGridVisibility)
+                {
+                    _searchGridVisibility = value;
+                    OnPropertyChanged("SearchGridVisibility");
+                }
+            }
+        }
+
+        private bool _buttonSaveDocumentEnable = true;
+        public bool ButtonSaveDocumentEnable
+        {
+            get => _buttonSaveDocumentEnable;
+            set
+            {
+                if (_buttonSaveDocumentEnable != value)
+                {
+                    _buttonSaveDocumentEnable = value;
+                    OnPropertyChanged("ButtonSaveDocumentEnable");
+                }
+            }
+        }
+        private void ClearArgumentsValues()
+        {
+            if (_documentArgumentsList != null && _documentArgumentsList.Any())
+            {
+                foreach (var daItem in _documentArgumentsList)
+                {
+                    daItem.Clean();
+                }
+            }
+        }
         public class DocumentListEntry
         {
             public string DocumentName { get; set; }
             public long DocumentUid { get; set; }
         }
 
-        private List<DocumentListEntry> _documentListEntries = new List<DocumentListEntry>();
-        public List<DocumentListEntry> DocumentSearchListEntries
+        private ObservableCollection<DocumentListEntry> _documentListEntries = new ObservableCollection<DocumentListEntry>();
+        public ObservableCollection<DocumentListEntry> DocumentSearchListEntries
         {
             get => _documentListEntries;
             set
             {
                 _documentListEntries = value;
-                OnPropertyChanged("DocumentSearchListEntries");
+                OnPropertyChanged("DocumentSearchListEntries");                
             }
         }
-        public MainWindowVM() : base ("[MainWindowVM]")
+        public MainWindowVM() : base("[MainWindowVM]")
         {
             _configuration = SingledToolbox.Get<Configuration<MainAppConfigurationModel>>();
             _appCommands = SingledToolbox.Get<ApplicationCommands>();
+            Task loadAttributesTask = new Task(() =>
+            {
+                DocumentArguments = _appCommands.GetAttributesCommand();
+                AttributesLoadingVisibility = Visibility.Collapsed;
+                AttributeGridVisibility = Visibility.Visible;
+            });
+            loadAttributesTask.Start();
         }
 
         private Configuration<MainAppConfigurationModel> _configuration;
-        //private KBDAPIService kbdService = SingledToolbox.Get<KBDAPIService>();
-        //private FilesWorkingService filesWorkingService = SingledToolbox.Get<FilesWorkingService>();
 
         private Command _selectDocumentFileCommand;
         public Command SelectDocumentFileCommand
@@ -152,12 +255,24 @@ namespace SUNTDLite.ViewModel
                 return _deleteDocumentCommand ??
                     (_deleteDocumentCommand = new Command(args =>
                     {
-                        var uid = args as string;
-                        LOG_TRACE($"DeleteDocumentCommand. {uid}");
-                        bool successed = _appCommands.DeleteDocumentCommand(uid);
-                        if (successed)
+                        long uid = -1;
+                        try
                         {
-                            MessageBox.Show($"Документ {uid} успешно удалён");
+                            uid = (long)args;
+                        }
+                        catch (InvalidCastException icEx)
+                        {
+                            LOG_ERROR("Ошибка в команде удаления документа, не могу привести uid документа к типу long.", icEx);
+                        }
+                        var result = MessageBox.Show($"Вы точно хотите удалить выбранный документ?", "Удаление документа", MessageBoxButton.YesNo);
+                        if (result == MessageBoxResult.Yes)
+                        {
+                            LOG_TRACE($"DeleteDocumentCommand. {uid}");
+                            string successed = _appCommands.DeleteDocumentCommand(uid);
+                            if (!string.IsNullOrEmpty(successed))
+                            {
+                                MessageBox.Show($"Запрос на удаление документа {uid} создан.\n {successed}");
+                            }
                         }
                     }));
             }
@@ -173,24 +288,40 @@ namespace SUNTDLite.ViewModel
                         obj =>
                         {
                             LOG_TRACE($"SaveDocumentCommand.");
-                            var createCardAttributes = _documentArgumentsList.Where(da => !string.IsNullOrEmpty(da.GetValueString()))
-                                .Select(da => new KBDAPIService.CreateCardAttribute(da.DocumentAttributeNumber, da.GetValueString())).ToList();
-                            DocsSoapService.DocumentDesc documentDesc = _appCommands.SaveDocumentCommand(createCardAttributes, _documentFileInfo);
-                            if (documentDesc != null)
+                            ButtonSaveDocumentEnable = false;
+                            if (_documentArgumentsList != null && _documentArgumentsList.Count > 0)
                             {
-                                MessageBox.Show($"Документ {documentDesc.oid}, {documentDesc.name} успешно сохранен", "Сохранение документа");
+                                List<KBDAPIService.CreateCardAttribute> createCardAttributes = new List<KBDAPIService.CreateCardAttribute>();
+                                foreach (var daItem in _documentArgumentsList)
+                                {
+                                    var strings = daItem.GetValueString();
+                                    if (strings != null)
+                                    {
+                                        foreach (var str in strings)
+                                        {
+                                            createCardAttributes.Add(new KBDAPIService.CreateCardAttribute(daItem.DocumentAttributeNumber, str));
+                                        }
+                                    }
+                                }
+
+                                DocsSoapService.DocumentDesc documentDesc = _appCommands.SaveDocumentCommand(createCardAttributes, _documentFileInfo);
+                                if (documentDesc != null)
+                                {
+                                    MessageBox.Show($"Документ {documentDesc.oid}, {documentDesc.name} успешно сохранен", "Сохранение документа");
+                                    ClearArgumentsValues();
+                                    DocumentFilePath = string.Empty;
+                                }
+                                else
+                                {
+                                    MessageBox.Show($"Сервер не вернул информацию о сохранении документа, файл не был отправлен!", "Сохранение документа",
+                                        MessageBoxButton.OK, MessageBoxImage.Warning, MessageBoxResult.OK);
+                                }
                             }
-                            else
-                            {
-                                MessageBox.Show($"Сервер не вернул информацию о сохранении документа, файл не был отправлен!", "Сохранение документа", 
-                                    MessageBoxButton.OK, MessageBoxImage.Warning, MessageBoxResult.OK);
-                            }
+                            ButtonSaveDocumentEnable = true;
                         },
                         isEnabledArg =>
                         {
-                            if (string.IsNullOrEmpty(DocumentFilePath) ||
-                            !File.Exists(DocumentFilePath) ||
-                            _daDocumentName == null || string.IsNullOrEmpty(_daDocumentName.Value))
+                            if (_daDocumentName == null || string.IsNullOrEmpty(_daDocumentName.Value))
                             {
                                 return false;
                             }
@@ -218,7 +349,9 @@ namespace SUNTDLite.ViewModel
                         {
                             // TODO: implement checking file type and ability to open editor
                             if (string.IsNullOrEmpty(DocumentFilePath) ||
-                            !(_documentFileInfo.Exists && (_documentFileInfo.Extension == ".pdf" || _documentFileInfo.Extension == ".doc" || _documentFileInfo.Extension == ".docx")))
+                            !(_documentFileInfo.Exists && (_documentFileInfo.Extension.ToLower() == ".pdf" ||
+                            _documentFileInfo.Extension.ToLower() == ".doc" || 
+                            _documentFileInfo.Extension.ToLower() == ".docx")))
                             {
                                 return false;
                             }
@@ -235,13 +368,32 @@ namespace SUNTDLite.ViewModel
                 return _searchDocumentsCommand ??
                     (_searchDocumentsCommand = new Command(
                         obj => {
-                            DocumentSearchListEntries.Clear();
-                            IEnumerable<Tuple<string, long>> documents = _appCommands.SearchDocumentsCommand(_documentSearch);
-                            if (documents != null)
+                            SearchResultString = "Поиск...";
+                            SearchLoadingVisibility = Visibility.Visible;
+                            SearchGridVisibility = Visibility.Collapsed;
+                            new Task(() =>
                             {
-                                var documentsListEntries = documents.Select(d => new DocumentListEntry() { DocumentName = d.Item1, DocumentUid = d.Item2 }).ToList();
-                                DocumentSearchListEntries = documentsListEntries;
-                            }
+                                DocumentSearchListEntries = new ObservableCollection<DocumentListEntry>();
+                                IEnumerable<Tuple<string, long>> documents = _appCommands.SearchDocumentsCommand(_documentSearch);
+                                if (documents != null)
+                                {
+                                    var documentsListEntries = documents.Select(d => new DocumentListEntry() { DocumentName = d.Item1, DocumentUid = d.Item2 }).ToList();
+                                    DocumentSearchListEntries.Clear();
+                                    foreach (var item in documentsListEntries)
+                                    {
+                                        DocumentSearchListEntries.Add(item);
+                                    }
+                                    SearchLoadingVisibility = Visibility.Collapsed;
+                                }
+                                else
+                                {
+                                    //MessageBox.Show("Документов не найдено.");
+                                    SearchResultString = "Документов не найдено";
+                                    SearchLoadingVisibility = Visibility.Visible;
+                                }
+                                
+                                SearchGridVisibility = Visibility.Visible;
+                            }).Start();                            
                         },
                         isEnableArgs =>
                         {
